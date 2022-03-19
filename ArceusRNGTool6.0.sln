@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArceusRNGTool6.0", "ArceusRNGTool6.0.csproj", "{E529D845-77C6-4178-9856-5D3E196FCCCF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E529D845-77C6-4178-9856-5D3E196FCCCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E529D845-77C6-4178-9856-5D3E196FCCCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E529D845-77C6-4178-9856-5D3E196FCCCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E529D845-77C6-4178-9856-5D3E196FCCCF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C7011835-4264-4906-A46B-99FCB88B671F}
+	EndGlobalSection
+EndGlobal
