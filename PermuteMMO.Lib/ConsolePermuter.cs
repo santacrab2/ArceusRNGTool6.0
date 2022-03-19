@@ -51,8 +51,8 @@ public static class ConsolePermuter
                 if (!result.HasResults)
                     continue;
 
-                Program.main.MassiveDisplay.AppendText ($"Spawner {j+1} at ({spawner.X:F1}, {spawner.Y:F1}, {spawner.Z}) shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
-                Program.main.MassiveDisplay.AppendText($"Parameters: {spawn}\n");
+                Program.main.MassiveDisplay.AppendText ($"Spawner {j+1} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
+                Program.main.Teleporterdisplay.AppendText($"Area: {areaName}\nSpawner {j + 1}\nX: {spawner.X:F1}\nY: {spawner.Y:F1}\nZ: {spawner.Z:F1}\n");
                 result.PrintResults();
               
             }

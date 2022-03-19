@@ -159,6 +159,7 @@ public static class SpawnGenerator
         result.Nature = nature;
         result.Height = height;
         result.Weight = weight;
+        result.ivs = ivs;
 
         return result;
     }

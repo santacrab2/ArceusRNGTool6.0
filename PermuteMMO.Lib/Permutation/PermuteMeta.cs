@@ -57,6 +57,8 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
     public void Print()
     {
         var steps = string.Join("|", Advances.Select(z => z.GetName()));
-        Program.main.MassiveDisplay.AppendText($"Shiny: {steps} >>> {(IsBonus ? "Bonus " : "")}Spawn{SpawnIndex} = {Entity.GetSummary()}\n\n");
+        Program.main.MassiveDisplay.AppendText($"Path: {steps}\n {(IsBonus ? "Bonus " : "")}\nSpawn{SpawnIndex}\n{Entity.GetSummary()}");
+        Program.main.Teleporterdisplay.AppendText($"{(IsBonus ? "Bonus " : "")}\nSpawn{SpawnIndex}\n{Entity.GetSummary()}");
+
     }
 }
