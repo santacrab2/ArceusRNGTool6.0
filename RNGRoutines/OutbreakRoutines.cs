@@ -148,13 +148,13 @@ namespace PLARNGGui
 
                     if (shiny && Program.main.AlphaSearch.Checked && alpha)
                     {
-                        Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                        Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
                     if (shiny && !Program.main.AlphaSearch.Checked)
                     {
-                        Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                        Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
@@ -178,13 +178,13 @@ namespace PLARNGGui
 
                     if (shiny && Program.main.AlphaSearch.Checked && alpha)
                     {
-                        Program.main.OutbreakDisplay.AppendText($"Respawn: {i}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                        Program.main.OutbreakDisplay.AppendText($"Respawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
                     if (shiny && !Program.main.AlphaSearch.Checked)
                     {
-                        Program.main.OutbreakDisplay.AppendText($"Respawn: {i}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                        Program.main.OutbreakDisplay.AppendText($"Respawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
