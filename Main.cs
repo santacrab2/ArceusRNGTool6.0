@@ -128,7 +128,13 @@ namespace PLARNGGui
         {
             Connection.Connect(Program.main.IP.Text,6000);
             if (Connection.Connected)
+            {
                 Program.main.StandardSpawnsDisplay.AppendText("connected to switch\n");
+                Program.main.OutbreakDisplay.AppendText("connected to switch\n");
+                Program.main.MassiveDisplay.AppendText("connected to switch\n");
+                Program.main.Distortiondisplay.AppendText("connected to switch\n");
+                Program.main.Teleporterdisplay.AppendText("connected to switch\n");
+            }
            
         }
   
@@ -161,6 +167,10 @@ namespace PLARNGGui
             Connection.Close();
             Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
             Program.main.StandardSpawnsDisplay.AppendText("Disconnected from switch\n");
+            Program.main.OutbreakDisplay.AppendText("Disconnected from switch\n");
+            Program.main.MassiveDisplay.AppendText("Disconnected from switch\n");
+            Program.main.Distortiondisplay.AppendText("Disconnected from switch\n");
+            Program.main.Teleporterdisplay.AppendText("Disconnected from switch\n");
         }
 
         private void label10_Click(object sender, EventArgs e)
@@ -170,6 +180,7 @@ namespace PLARNGGui
 
         private void outbreakread_Click(object sender, EventArgs e)
         {
+            Program.main.OutbreakDisplay.Clear();
             outbreakroutes.ReadOutbreakID();
         }
 
@@ -195,6 +206,8 @@ namespace PLARNGGui
 
         private void MassiveRead_Click(object sender, EventArgs e)
         {
+            Program.main.MassiveDisplay.Clear();
+            Program.main.Teleporterdisplay.Clear();
             mmoroutes.ReadMassOutbreak();
         }
 
@@ -280,6 +293,8 @@ namespace PLARNGGui
 
         private void checknear_Click(object sender, EventArgs e)
         {
+            Program.main.StandardSpawnsDisplay.Clear();
+            Program.main.Teleporterdisplay.Clear();
             Program.main.StandardSpawnsDisplay.AppendText("Searching All Group ID's for Shinies!\n");
             rngroutes.StandardCheckNear();
             
@@ -287,6 +302,7 @@ namespace PLARNGGui
 
         private void readalldisbutton_Click(object sender, EventArgs e)
         {
+            Program.main.Distortiondisplay.Clear();
             Program.main.Distortiondisplay.AppendText("Searching All possible Distortions for Shinies...\n");
             disroutes.DistortionReader();
         }
@@ -315,16 +331,18 @@ namespace PLARNGGui
 
         private void aggrpathbutton_Click(object sender, EventArgs e)
         {
+            Program.main.Teleporterdisplay.Clear();
+            Program.main.MassiveDisplay.Clear();
             var mmoptr = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x1b0 };
             var mmooff = routes.PointerAll(mmoptr).Result;
             var mmoblock = routes.ReadBytesAbsoluteAsync(mmooff, 0x3980).Result;
-            PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha || results.IsShiny;
+            PermuteMeta.SatisfyCriteria = (results, advances) => (results.IsAlpha || results.IsShiny) && Enums.AgressiveSpecies.Contains(results.Name);
             if ((Enums.PathSearchSettings)Program.main.aggrpathsearchsettings.SelectedItem == Enums.PathSearchSettings.ShinyandAlpha)
-                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha && results.IsShiny;
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha && results.IsShiny && Enums.AgressiveSpecies.Contains(results.Name);
             if ((Enums.PathSearchSettings)Program.main.aggrpathsearchsettings.SelectedItem == Enums.PathSearchSettings.ShinyOnly)
-                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsShiny;
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsShiny && Enums.AgressiveSpecies.Contains(results.Name);
             if ((Enums.PathSearchSettings)Program.main.aggrpathsearchsettings.SelectedItem == Enums.PathSearchSettings.AlphaOnly)
-                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha;
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha && Enums.AgressiveSpecies.Contains(results.Name);
             ConsolePermuter.PermuteBlock(mmoblock);
         }
     }
