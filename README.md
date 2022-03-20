@@ -68,3 +68,6 @@ Aggressive Path Key:<br>
   Shiny's that are found will be posted to this page along with its coordinates for easy copy and paste. Copy and Paste the x,y,z coordinates you want and press teleport. When you first load up a Map Press Camp Read to load the coordinates for the camp. You can also use this to find any coordinates anywhere in the game. Pasture Teleport only works when you are in Jubilife to make up for Heinous crime that it is not a quick travel spot. 
   
   ![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/teleport.png)
+  
+  
+  Any questions on this Repo after completely reading the Guide can be answered at Https://www.piplup.net 
