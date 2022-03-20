@@ -25,6 +25,7 @@
    Inject:
    1. Set your group id and seed to inject which will be automatically filled after using calculate
    2. press inject, catch your shiny. 
+![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/standardchecknear.png)
 ## Outbreaks:
   Currently this can only be done while you are in the map. I do plan to adjust this is the near future.
   1. Go to the map of choice.
@@ -33,4 +34,33 @@
   4. Set Max advances and hit calculate and it will tell you how many advances to find a shiny, as well as the seed for that shiny to appear in the initial spawns.
       - Click the Alpha Search if you would like an Alpha-Shiny to appear
   5. Either figure out a way to advance or click inject to write the seed it calculated.
-# 
+![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/outbreakreadcalc.png)
+# Massive Outbreaks
+  There are two modes with this, a read which just lets you know whats in the current spawners without any changes and an aggressive path finding tool.
+  For Now, <i><b>All MMO Reads must be done from Jubilife</i></b>, this will change soon.
+  1. To use the read, enter your shiny rolls, press read. 
+  2. To use the Aggressive Path Finder
+  3. Ensure you have your Save file from your game(your Main) in the same folder as the app
+  so the app can determine your shiny rolls more accurately this way. Eventually Reads will include this.
+  4. Set your search settings
+     - All: includes both shinies and non-shiny alphas
+     - ShinyandAlpha - only lists pokemon that are both alpha and shiny
+     - Shiny Only
+     - Alpha Only
+  5. Press Aggr. Path Find button
+ <b>The Read</b>
+![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/mmoread.png)
+<b>The Path Find Search</b>
+![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/mmopathfind.png)
+
+# Distortions
+  This is very limited and currently just reads the Distortions that are loaded into your game, this only changes if you close
+  and open your game. Read from the Map, it looks for specific high profile pokemon. 
+  Create Distortion button will instantly create a distortion, don't spam this button as it may crash your game.
+  
+  ![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/distortionread.png)
+ 
+# Teleporter
+  Shiny's that are found will be posted to this page along with its coordinates for easy copy and paste. Copy and Paste the x,y,z coordinates you want and press teleport. When you first load up a Map Press Camp Read to load the coordinates for the camp. You can also use this to find any coordinates anywhere in the game. Pasture Teleport only works when you are in Jubilife to make up for Heinous crime that it is not a quick travel spot. 
+  
+  ![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/teleport.png)
