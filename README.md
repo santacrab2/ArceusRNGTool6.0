@@ -48,10 +48,10 @@
      - Shiny Only
      - Alpha Only
   5. Press Aggr. Path Find button<br>
-Aggressive Path Key:
-  A1-4 : Advance the number listed, so 1 is despawn 1, 2 is despawn in a 1v2, etc.
-  G1-3 : Despawn the number listed and then go to your camp and back to the Specific location.
-  SB : Start the Bonus Round, basically finish the first round off completely.
+Aggressive Path Key:<br>
+  A1-4 : Advance the number listed, so 1 is despawn 1, 2 is despawn in a 1v2, etc.<br>
+  G1-3 : Despawn the number listed and then go to your camp and back to the Specific location.<br>
+  SB : Start the Bonus Round, basically finish the first round off completely.<br>
  <b>The Read</b>
 ![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/mmoread.png)
 <b>The Path Find Search</b>
