@@ -47,7 +47,7 @@
      - ShinyandAlpha - only lists pokemon that are both alpha and shiny
      - Shiny Only
      - Alpha Only
-  5. Press Aggr. Path Find button
+  5. Press Aggr. Path Find button<br>
  <b>The Read</b>
 ![](https://raw.githubusercontent.com/santacrab2/ArceusRNGTool6.0/master/rngtoolscreens/mmoread.png)
 <b>The Path Find Search</b>
