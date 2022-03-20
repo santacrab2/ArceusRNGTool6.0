@@ -1,13 +1,13 @@
 # ArceusRNGTool6.0
 
 ## Credits:
-  A huge Thank you for all the hours upon hours of hardwork that Lincoln-LM, Capitalism(Cappi), Kurt and Many others who are constantly researching these games and
+  A huge Thank you for all the hours upon hours of hardwork that Lincoln-LM, Capitalism(Cappy), Kurt and Many others who are constantly researching these games and
   developing tools for developers to develop tools for the users. This code is heavily based upon the previous mentioned users contributions to the community. I simply
   took their code, reworked it very very minorly and put it into a GUI. This is essentially just a collection of the current RNG scripts for Pokemon Legends Arceus. 
   ## More Credits:
   Kurt - For creating PKHeX, the Permutation script and many other projects<br>
   Lincoln-LM For creating the original RNG scripts<br>
-  Capitalism - For creating the Bonus round pathing script and general support understanding this stuff<br>
+  Capitalism(Cappy) - For creating the Bonus round pathing script and general support understanding this stuff<br>
   Olizor - For his work on Sysbot.base and all the others who have helped develop it.<br>
   Any one else who has contributed in anyway to the RNG community.<br>
   
