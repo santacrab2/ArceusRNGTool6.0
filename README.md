@@ -9,7 +9,8 @@
   Lincoln-LM For creating the original RNG scripts<br>
   Capitalism(Cappy) - For creating the Bonus round pathing script and general support understanding this stuff<br>
   Berichan - For their work on the Teleporting mechanisms.<br>
-  Olizor - For his work on Sysbot.base and all the others who have helped develop it.<br>
+  Olizor - For their work on Sysbot.base and all the others who have helped develop it.<br>
+  Zyro - For their work on the Distortion scripts and general support through out the entire coding process<br>
   Any one else who has contributed in anyway to the RNG community.<br>
   
   # Usage:
