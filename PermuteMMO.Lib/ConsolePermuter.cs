@@ -52,7 +52,7 @@ public static class ConsolePermuter
                     continue;
 
                 Program.main.MassiveDisplay.AppendText ($"Spawner {j+1} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
-                Program.main.Teleporterdisplay.AppendText($"Area: {areaName}\nSpawner {j + 1}\nX: {spawner.X:F1}\nY: {spawner.Y:F1}\nZ: {spawner.Z:F1}\n");
+                Program.main.Teleporterdisplay.AppendText($"Area: {areaName}\nSpawner {j + 1} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nX: {spawner.X:F1}\nY: {spawner.Y:F1}\nZ: {spawner.Z:F1}\n");
                 result.PrintResults();
               
             }

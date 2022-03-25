@@ -267,6 +267,7 @@ namespace PLARNGGui
                 Program.main.CoordZ.Text = spawnmap[f.ToString()]["coords"][2].ToString();
 
             }
+            Program.main.StandardSpawnsDisplay.AppendText("Search Complete.");
             return;
         }
      

@@ -79,10 +79,11 @@ namespace PLARNGGui
         }
         public async void DistortionMaker()
         {
-            uint ActivateDistortion = 0x024A03B8;
-            var MainNsoBase = await Main.routes.GetMainNsoBaseAsync().ConfigureAwait(false);
-            await Main.routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x5280010A), MainNsoBase + ActivateDistortion).ConfigureAwait(false);
-            await Main.routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x7100052A), MainNsoBase + ActivateDistortion).ConfigureAwait(false);
+            ulong ActivateDistortion = 0x024A0428;
+            var MainNsoBase = await Main.routes.GetMainNsoBaseAsync();
+            await Main.routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x5280010A), MainNsoBase + ActivateDistortion);
+            await Main.routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x7100052A), MainNsoBase + ActivateDistortion);
+
         }
         public (string,bool) GetDistortionSpecies(double encslot)
         {
