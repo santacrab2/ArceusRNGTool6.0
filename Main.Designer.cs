@@ -75,6 +75,9 @@ namespace PLARNGGui
             this.label10 = new System.Windows.Forms.Label();
             this.OutbreakDisplay = new System.Windows.Forms.RichTextBox();
             this.MMOtab = new System.Windows.Forms.TabPage();
+            this.aggrpathbutton = new System.Windows.Forms.Button();
+            this.label26 = new System.Windows.Forms.Label();
+            this.aggrpathsearchsettings = new System.Windows.Forms.ComboBox();
             this.MMOSRs = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.MassiveRead = new System.Windows.Forms.Button();
@@ -110,9 +113,6 @@ namespace PLARNGGui
             this.IP = new System.Windows.Forms.TextBox();
             this.connect = new System.Windows.Forms.Button();
             this.Disconnect = new System.Windows.Forms.Button();
-            this.aggrpathsearchsettings = new System.Windows.Forms.ComboBox();
-            this.label26 = new System.Windows.Forms.Label();
-            this.aggrpathbutton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.StandardSpawnstab.SuspendLayout();
             this.Outbreaktab.SuspendLayout();
@@ -623,6 +623,33 @@ namespace PLARNGGui
             this.MMOtab.TabIndex = 2;
             this.MMOtab.Text = "Massive Outbreaks";
             // 
+            // aggrpathbutton
+            // 
+            this.aggrpathbutton.Location = new System.Drawing.Point(769, 301);
+            this.aggrpathbutton.Name = "aggrpathbutton";
+            this.aggrpathbutton.Size = new System.Drawing.Size(121, 27);
+            this.aggrpathbutton.TabIndex = 9;
+            this.aggrpathbutton.Text = "Aggr. Path Find";
+            this.aggrpathbutton.UseVisualStyleBackColor = true;
+            this.aggrpathbutton.Click += new System.EventHandler(this.aggrpathbutton_Click);
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(644, 15);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(119, 15);
+            this.label26.TabIndex = 8;
+            this.label26.Text = "Aggr. Search Settings";
+            // 
+            // aggrpathsearchsettings
+            // 
+            this.aggrpathsearchsettings.FormattingEnabled = true;
+            this.aggrpathsearchsettings.Location = new System.Drawing.Point(769, 10);
+            this.aggrpathsearchsettings.Name = "aggrpathsearchsettings";
+            this.aggrpathsearchsettings.Size = new System.Drawing.Size(121, 23);
+            this.aggrpathsearchsettings.TabIndex = 7;
+            // 
             // MMOSRs
             // 
             this.MMOSRs.Location = new System.Drawing.Point(544, 7);
@@ -993,33 +1020,6 @@ namespace PLARNGGui
             this.Disconnect.Text = "Disconnect";
             this.Disconnect.UseVisualStyleBackColor = true;
             this.Disconnect.Click += new System.EventHandler(this.Disconnect_Click);
-            // 
-            // aggrpathsearchsettings
-            // 
-            this.aggrpathsearchsettings.FormattingEnabled = true;
-            this.aggrpathsearchsettings.Location = new System.Drawing.Point(769, 10);
-            this.aggrpathsearchsettings.Name = "aggrpathsearchsettings";
-            this.aggrpathsearchsettings.Size = new System.Drawing.Size(121, 23);
-            this.aggrpathsearchsettings.TabIndex = 7;
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(644, 15);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(119, 15);
-            this.label26.TabIndex = 8;
-            this.label26.Text = "Aggr. Search Settings";
-            // 
-            // aggrpathbutton
-            // 
-            this.aggrpathbutton.Location = new System.Drawing.Point(769, 301);
-            this.aggrpathbutton.Name = "aggrpathbutton";
-            this.aggrpathbutton.Size = new System.Drawing.Size(121, 27);
-            this.aggrpathbutton.TabIndex = 9;
-            this.aggrpathbutton.Text = "Aggr. Path Find";
-            this.aggrpathbutton.UseVisualStyleBackColor = true;
-            this.aggrpathbutton.Click += new System.EventHandler(this.aggrpathbutton_Click);
             // 
             // Main
             // 

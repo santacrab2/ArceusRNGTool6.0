@@ -124,11 +124,25 @@ namespace PLARNGGui
             catch { }
         }
        public static Socket Connection = new Socket(SocketType.Stream, ProtocolType.Tcp);
-        private void connect_Click(object sender, EventArgs e)
+        private async void connect_Click(object sender, EventArgs e)
         {
             Connection.Connect(Program.main.IP.Text,6000);
             if (Connection.Connected)
             {
+                var softbanptr = new long[] { 0x42BA6B0, 0x268, 0x70 };
+                var softbanoff = routes.PointerAll(softbanptr).Result;
+                var softbanval = routes.ReadBytesAbsoluteAsync(softbanoff, 4).Result;
+                if(BitConverter.ToUInt32(softbanval) != 0)
+                {
+                    Program.main.StandardSpawnsDisplay.AppendText("Soft ban detected, unbanning.");
+                    Program.main.OutbreakDisplay.AppendText("Soft ban detected, unbanning.");
+                    Program.main.MassiveDisplay.AppendText("Soft ban detected, unbanning.");
+                    Program.main.Distortiondisplay.AppendText("Soft ban detected, unbanning.");
+                    Program.main.Teleporterdisplay.AppendText("Soft ban detected, unbanning.");
+                    // Write the value to 0.
+                    var data = BitConverter.GetBytes(0);
+                    await routes.PointerPoke(data, softbanptr);
+                }
                 Program.main.StandardSpawnsDisplay.AppendText("connected to switch\n");
                 Program.main.OutbreakDisplay.AppendText("connected to switch\n");
                 Program.main.MassiveDisplay.AppendText("connected to switch\n");

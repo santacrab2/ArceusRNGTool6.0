@@ -85,14 +85,14 @@ namespace PLARNGGui
             var encmap = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(Encountersjson);
             var spawnmap = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(Spawnersjson);
             var encslotsum = 101;
-            var encmin = 0;
-            var encmax = 100;
-                var groupname = spawnmap[$"{Program.main.standardgroupid.SelectedItem}"]["name"];
+            uint encmin = 0;
+            uint encmax = 100;
+            var groupname = spawnmap[$"{Program.main.standardgroupid.SelectedItem}"]["name"];
                
 
-                var possiblespawns = encmap[$"{groupname}"][$"{((Enums.Time)Program.main.Timeofdayselection.SelectedItem == Enums.Time.Any ? "Any Time" : $"{Program.main.Timeofdayselection.SelectedItem}")}" + "/" + $"{((Enums.Weather)Program.main.weatherselection.SelectedItem == Enums.Weather.All ? "All Weather" : $"{Program.main.weatherselection.SelectedItem}")}"];
+            var possiblespawns = encmap[$"{groupname}"][$"{((Enums.Time)Program.main.Timeofdayselection.SelectedItem == Enums.Time.Any ? "Any Time" : $"{Program.main.Timeofdayselection.SelectedItem}")}" + "/" + $"{((Enums.Weather)Program.main.weatherselection.SelectedItem == Enums.Weather.All ? "All Weather" : $"{Program.main.weatherselection.SelectedItem}")}"];
 
-
+            var keyspecies = "";
                 foreach (var key in possiblespawns)
                 {
                     encslotsum += (int)key.Value;
@@ -103,15 +103,15 @@ namespace PLARNGGui
                 foreach (var key in possiblespawns)
                 {
 
-                    var keyspecies = $"{key}".Remove($"{key}".IndexOf(":")).Replace("\"", "");
+                    keyspecies = $"{key}".Remove($"{key}".IndexOf(":")).Replace("\"", "");
 
                     if ((string)Program.main.pokemonselection.SelectedItem == keyspecies)
                     {
-                        encmax = encmin + (int)key.Value;
+                        encmax = encmin + (uint)key.Value;
                         break;
                     }
                     else
-                        encmin += (int)key.Value;
+                        encmin += (uint)key.Value;
                 }
             
             bool shiny = false;
@@ -124,7 +124,7 @@ namespace PLARNGGui
             ulong shinyseed = new ulong();
             int advances = 0;
             var maxadv = Convert.ToUInt32(Program.main.MaxAdvances.Text);
-
+            double EncounterSlotRand = 0.0;
 
             for (int i = 0; i <= maxadv; i++)
             {
@@ -133,10 +133,12 @@ namespace PLARNGGui
                 var generator_seed = mainrng.Next();
                 mainrng.Next();
                 var rng = new Xoroshiro128Plus(generator_seed);
-                var EncounterSlotRand = (float)(encslotsum * (float)((float)rng.Next() * 5.421e-20f)) + 0.0;
-                (shiny, encryption_constant, pid, ivs, ability, gender, nature, shinyseed) = GenerateFromSeed(rng.Next(), Convert.ToInt32(Program.main.ShinyRollstext.Text), Convert.ToInt32(Program.main.guaranteedivs.Text));
-                if (encmin >= (float)EncounterSlotRand && (float)EncounterSlotRand > encmax)
+                EncounterSlotRand = rng.Next() / Math.Pow(2, 64) * encslotsum;
+                var groupseed = rng.Next();
+                (shiny, encryption_constant, pid, ivs, ability, gender, nature, shinyseed) = GenerateFromSeed(groupseed, Convert.ToInt32(Program.main.ShinyRollstext.Text), Convert.ToInt32(Program.main.guaranteedivs.Text));
+                if ( EncounterSlotRand < encmin || EncounterSlotRand >= encmax)
                 {
+                    advances = i;
                     continue;
                 }
                 
@@ -145,23 +147,32 @@ namespace PLARNGGui
                 {
                     
                         sseed = generator_seed;
+                        advances = i;
                         break;
                 }
 
                 mainrng = new Xoroshiro128Plus(mainrng.Next());
                 sseed = generator_seed;
                 advances = i;
+                continue;
 
             }
             if (advances >= Convert.ToInt32(Program.main.MaxAdvances.Text))
             {
 
                 Program.main.StandardSpawnsDisplay.AppendText("No Match Found with in your Max Advances\n");
-                Program.main.StandardSpawnsDisplay.AppendText($"Advances: {advances}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", sseed)}\n");
                 Program.main.SeedToInject.Text = string.Format("0x{0:X}", sseed);
                 return sseed;
             }
-           Program.main.StandardSpawnsDisplay.AppendText($"Advances: {advances}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", sseed)}\n");
+           Program.main.StandardSpawnsDisplay.AppendText($"Species: {EncounterSlotRand}\nAdvances: {advances}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", sseed)}\n");
+            double[] coords = spawnmap[$"{Program.main.standardgroupid.SelectedItem}"]["coords"].ToObject<double[]>();
+            var coordx = coords[0];
+            var coordy = coords[1];
+            var coordz = coords[2];
+            Program.main.Teleporterdisplay.AppendText($"Spawner: {Program.main.standardgroupid.SelectedItem}\nSpecies: {keyspecies}\nX: {coordx}\nY: {coordy}\nZ: {coordz}");
+            Program.main.CoordX.Text = coordx.ToString();
+            Program.main.CoordY.Text = coordy.ToString();
+            Program.main.CoordZ.Text = coordz.ToString();
             Program.main.SeedToInject.Text = string.Format("0x{0:X}", sseed);
 
 
