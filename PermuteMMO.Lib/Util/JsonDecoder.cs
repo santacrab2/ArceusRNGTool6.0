@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using Newtonsoft.Json;
 using PKHeX.Core;
-using PLARNGGui;
 
 namespace PermuteMMO.Lib;
 
@@ -10,6 +9,11 @@ namespace PermuteMMO.Lib;
 /// </summary>
 public static class JsonDecoder
 {
+    /// <summary>
+    /// Wrapper to deserialize the json using whatever package this project is currently using.
+    /// </summary>
+    public static T Deserialize<T>(string json) where T : class => JsonConvert.DeserializeObject<T>(json);
+
     /// <summary>
     /// Converts the json string back to a usable dictionary.
     /// </summary>
@@ -31,8 +35,8 @@ public static class JsonDecoder
 /// <summary>
 /// Encounter slot detail.
 /// </summary>
-/// <param name="Name">Community label name with Species-Form</param>
 /// <param name="Rate">Weight factor used to determine how frequent the encounter is yielded.</param>
+/// <param name="Name">Community label name with Species-Form</param>
 /// <param name="IsAlpha">Indicates if it is an alpha</param>
 /// <param name="Level">Level range array</param>
 /// <param name="FlawlessIVs">Amount of flawless IVs</param>
@@ -46,8 +50,9 @@ public sealed record SlotDetail(
 {
     public int LevelMin => Level[0];
     public int LevelMax => Level[1];
-    public int Species { get; private set; }
-    public int Form { get; private set; }
+    public ushort Species { get; private set; }
+    public ushort Form { get; private set; }
+    public bool IsSkittish => BehaviorUtil.Skittish.Contains(Species);
 
     /// <summary>
     /// Parses the string name into actual indexes.
@@ -60,7 +65,7 @@ public sealed record SlotDetail(
             var dash = Name.IndexOf('-');
             if (dash > 0)
             {
-                Form = int.Parse(Name.AsSpan(dash+1));
+                Form = ushort.Parse(Name.AsSpan(dash+1));
                 species = Name[..dash];
             }
             else
@@ -73,11 +78,11 @@ public sealed record SlotDetail(
             if (species == "Mr.Mime") // STOP FAKE NAMING SPECIES
                 species = "Mr. Mime";
 
-            Species = SpeciesName.SpeciesDict[(int)LanguageID.English][species];
+            Species = (ushort)SpeciesName.SpeciesDict[(int)LanguageID.English][species];
         }
         catch (Exception e)
         {
-            Program.main.MassiveDisplay.AppendText(e.ToString());
+            Console.WriteLine(e);
             throw;
         }
     }

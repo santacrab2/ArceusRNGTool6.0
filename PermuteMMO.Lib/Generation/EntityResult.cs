@@ -1,4 +1,5 @@
 ﻿using PKHeX.Core;
+
 namespace PermuteMMO.Lib;
 
 /// <summary>
@@ -6,28 +7,85 @@ namespace PermuteMMO.Lib;
 /// </summary>
 public sealed class EntityResult
 {
-    public ulong Seed { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
+    public readonly byte[] IVs = { byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue, byte.MaxValue };
+
+    public ulong Seed { get; init; }
+    public int Level { get; init; }
+
     public uint EC { get; set; }
     public uint FakeTID { get; set; }
-
     public uint PID { get; set; }
-    public int RollCount { get; set; }
+
     public uint ShinyXor { get; set; }
-    public int Level { get; set; }
-    public int PermittedRolls { get; set; }
-    public int Ability { get; set; }
-    public int Gender { get; set; }
-    public int Nature { get; set; }
+    public int RollCountUsed { get; set; }
+    public int RollCountAllowed { get; set; }
+    public ushort Species { get; init; }
+    public ushort Form { get; init; }
 
     public bool IsShiny { get; set; }
-    public bool IsAlpha { get; set; }
+    public bool IsAlpha { get; init; }
+    public byte Ability { get; set; }
+    public byte Gender { get; set; }
+    public byte Nature { get; set; }
     public byte Height { get; set; }
     public byte Weight { get; set; }
-    public int[] ivs { get; set; }
 
-    public string GetSummary()
+    public bool IsSkittish => BehaviorUtil.Skittish.Contains(Species);
+    public bool IsAggressive => IsAlpha || !IsSkittish;
+
+    public string GetSummary(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
     {
-        return $"{(IsAlpha? "Alpha-" : "")}{Name}\nShiny: {IsShiny}\nAlpha: {IsAlpha}\nPID: {PID}\nEC: {EC}\nGender: {Gender}\nLevel: {Level}\nIVs: {ivs[0]}\\{ivs[1]}\\{ivs[2]}\\{ivs[3]}\\{ivs[4]}\\{ivs[5]}\nAbility: {Ability}\nNature: {(Nature)Nature}\nHeight: {Height}\nWeight: {Weight}\n\n";
+        var pid = string.Format("{0:X}", PID);
+        var ec = string.Format("{0:X}", EC);
+        var shiny = IsShiny ? $"Shiny: {(ShinyXor == 0 ? "square" : "star")}\n" : "False\n";
+        var level = Level.ToString();
+        var ivs = $" {IVs[0]:00}/{IVs[1]:00}/{IVs[2]:00}/{IVs[3]:00}/{IVs[4]:00}/{IVs[5]:00}\n";
+        var nature = $"Nature: {GameInfo.GetStrings(1).Natures[Nature]}\n";
+        var alpha = IsAlpha ? "Alpha-" : "";
+        var notAlpha = !IsAlpha ? " -- NOT ALPHA" : "";
+        var gender = Gender switch
+        {
+            2 => "",
+            1 => " (F)",
+            _ => " (M)",
+        };
+        var feasibility = GetFeasibility(advances, skittishBase, skittishBonus);
+        return $"{alpha}{Name}{gender}\nPID:{pid}\nEC:{ec}\n{shiny}Level: {level}\nIVs:{ivs}{nature,-8}{feasibility}\n\n";
+    }
+
+    private static string GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
+    {
+        if (!advances.IsAnyMulti())
+            return "Single advances!\n";
+
+        if (!skittishBase && !skittishBonus)
+            return string.Empty;
+
+        bool skittishMulti = false;
+        int bonusIndex = GetBonusStartIndex(advances);
+        if (bonusIndex != -1)
+        {
+            skittishMulti |= skittishBase && advances[..bonusIndex].IsAnyMulti();
+            skittishMulti |= skittishBonus && advances[bonusIndex..].IsAnyMulti();
+        }
+        else
+        {
+            skittishMulti |= skittishBase && advances.IsAnyMulti();
+        }
+
+        if (skittishMulti)
+            return "-- Skittish: Aggressive!\n";
+        return     "-- Skittish: Single advances!\n";
+    }
+
+    private static int GetBonusStartIndex(ReadOnlySpan<Advance> advances)
+    {
+        for (int i = 0; i < advances.Length; i++)
+        {
+            if (advances[i] == Advance.SB)
+                return i;
+        }
+        return -1;
     }
 }

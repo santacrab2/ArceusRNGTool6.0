@@ -3,13 +3,14 @@
 namespace PermuteMMO.Lib;
 
 /// <summary>
-/// Massive Mass Outbreak data for a single area, containing multiple spawners and some metadata.
+/// Massive Mass Outbreak data for a single area, containing multiple spawner objects and some metadata.
 /// </summary>
 public readonly ref struct MassiveOutbreakArea8a
 {
     public const int SIZE = 0xB80;
-    private readonly Span<byte> Data;
     public const int SpawnerCount = 20;
+
+    private readonly Span<byte> Data;
 
     public MassiveOutbreakArea8a(Span<byte> data) => Data = data;
 

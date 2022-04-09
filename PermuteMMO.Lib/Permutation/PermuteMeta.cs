@@ -4,7 +4,7 @@ namespace PermuteMMO.Lib;
 /// <summary>
 /// Stores object-type references for cleaner passing internally. Only refer to <see cref="Results"/> when done.
 /// </summary>
-public sealed record PermuteMeta(ISpawnInfo Spawner)
+public sealed record PermuteMeta(SpawnInfo Spawner)
 {
     /// <summary>
     /// Global configuration for determining if a <see cref="EntityResult"/> is a suitable result.
@@ -43,10 +43,10 @@ public sealed record PermuteMeta(ISpawnInfo Spawner)
     /// <summary>
     /// Calls <see cref="PermuteResult.Print"/> for all objects in the result list.
     /// </summary>
-    public void PrintResults()
+    public void PrintResults(bool indicateSkittish,bool mmo)
     {
         foreach (var result in Results)
-            result.Print();
+            result.Print(indicateSkittish,mmo:mmo);
     }
 
     public bool HasResults => Results.Count is not 0;
@@ -54,11 +54,14 @@ public sealed record PermuteMeta(ISpawnInfo Spawner)
 
 public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in int SpawnIndex, in bool IsBonus)
 {
-    public void Print()
+    public void Print(bool skittishBase,bool mmo, bool skittishBonus = false)
     {
         var steps = string.Join("|", Advances.Select(z => z.GetName()));
-        Program.main.MassiveDisplay.AppendText($"Path: {steps}\n {(IsBonus ? "Bonus " : "")}\nSpawn{SpawnIndex}\n{Entity.GetSummary()}");
-        
-
+        // 37 total characters for the steps:
+        // 10+7 spawner has 6+(3)+3=12 max permutations, +"SB|", remove last |; (3*12+2)=37.
+        if(mmo)
+            Program.main.MassiveDisplay.AppendText($"Path: {steps}\n{(IsBonus ? "Bonus " : "")}Spawn:{SpawnIndex}\n{Entity.GetSummary(Advances, skittishBase, skittishBonus)}");
+        else
+            Program.main.OutbreakDisplay.AppendText($"Path: {steps}\n{(IsBonus ? "Bonus " : "")}Spawn:{SpawnIndex}\n{Entity.GetSummary(Advances, skittishBase, skittishBonus)}");
     }
 }

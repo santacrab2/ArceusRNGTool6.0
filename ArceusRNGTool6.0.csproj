@@ -11,10 +11,14 @@
 
   <ItemGroup>
     <None Remove="arceus_ice_TtM_icon.ico" />
+    <None Remove="mmo_es.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="arceus_ice_TtM_icon.ico" />
+    <EmbeddedResource Include="mmo_es.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -22,12 +26,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.14" />
     <PackageReference Include="PKHeX.Core" Version="22.3.18" />
+    <PackageReference Include="z3win_AnyCPU" Version="4.5.0.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="mmo_es.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Reference Include="EtumrepMMO.Lib">
+      <HintPath>..\EtumrepMMO\EtumrepMMO.Lib\bin\x64\Release\net6.0\EtumrepMMO.Lib.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

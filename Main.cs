@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using Newtonsoft.Json;
 using SysBot.Base;
 using PermuteMMO.Lib;
+using EtumrepMMO.Lib;
 
 
 namespace PLARNGGui
@@ -32,6 +33,7 @@ namespace PLARNGGui
             outbreakmap.DataSource = Enum.GetValues(typeof(Enums.Maps));
             aggrpathsearchsettings.DataSource = Enum.GetValues(typeof(Enums.PathSearchSettings));
             distortionmap.DataSource = Enum.GetValues(typeof(Enums.Maps));
+            outbreakpathsettings.DataSource = Enum.GetValues(typeof(Enums.PathSearchSettings));
           
             
 
@@ -194,8 +196,18 @@ namespace PLARNGGui
 
         private void outbreakread_Click(object sender, EventArgs e)
         {
+            if(!inmapbox.Checked)
+                Program.main.Teleporterdisplay.Clear();
             Program.main.OutbreakDisplay.Clear();
-            outbreakroutes.ReadOutbreakID();
+            if(inmapbox.Checked)
+                outbreakroutes.ReadOutbreakID();
+            else
+            {
+                var outbreakptr = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x20 };
+                var outbreakoff = routes.PointerAll(outbreakptr).Result;
+                var outbreakblock = routes.ReadBytesAbsoluteAsync(outbreakoff, 0x190).Result;
+                outbreakroutes.ReadOutbreakJubilife(outbreakblock);
+            }
         }
 
         private void label16_Click(object sender, EventArgs e)
@@ -350,14 +362,69 @@ namespace PLARNGGui
             var mmoptr = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x1b0 };
             var mmooff = routes.PointerAll(mmoptr).Result;
             var mmoblock = routes.ReadBytesAbsoluteAsync(mmooff, 0x3980).Result;
-            PermuteMeta.SatisfyCriteria = (results, advances) => (results.IsAlpha || results.IsShiny) && Enums.AgressiveSpecies.Contains(results.Name);
+            PermuteMeta.SatisfyCriteria = (results, advances) => (results.IsAlpha || results.IsShiny);
             if ((Enums.PathSearchSettings)Program.main.aggrpathsearchsettings.SelectedItem == Enums.PathSearchSettings.ShinyandAlpha)
-                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha && results.IsShiny && Enums.AgressiveSpecies.Contains(results.Name);
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha && results.IsShiny;
             if ((Enums.PathSearchSettings)Program.main.aggrpathsearchsettings.SelectedItem == Enums.PathSearchSettings.ShinyOnly)
-                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsShiny && Enums.AgressiveSpecies.Contains(results.Name);
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsShiny;
             if ((Enums.PathSearchSettings)Program.main.aggrpathsearchsettings.SelectedItem == Enums.PathSearchSettings.AlphaOnly)
-                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha && Enums.AgressiveSpecies.Contains(results.Name);
-            ConsolePermuter.PermuteBlock(mmoblock);
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha; 
+            ConsolePermuter.PermuteMassiveMassOutbreak(mmoblock);
+        }
+
+        private void outbreakpaths_Click(object sender, EventArgs e)
+        {
+            Program.main.OutbreakDisplay.Clear();
+            var outbreakptr = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x20 };
+            var outbreakoff = routes.PointerAll(outbreakptr).Result;
+            var outbreakblock = routes.ReadBytesAbsoluteAsync(outbreakoff, 0x190).Result;
+            PermuteMeta.SatisfyCriteria = (results, advances) => (results.IsAlpha || results.IsShiny);
+            if ((Enums.PathSearchSettings)Program.main.outbreakpathsettings.SelectedItem == Enums.PathSearchSettings.ShinyandAlpha)
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha && results.IsShiny;
+            if ((Enums.PathSearchSettings)Program.main.outbreakpathsettings.SelectedItem == Enums.PathSearchSettings.ShinyOnly)
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsShiny;
+            if ((Enums.PathSearchSettings)Program.main.outbreakpathsettings.SelectedItem == Enums.PathSearchSettings.AlphaOnly)
+                PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha;
+            ConsolePermuter.PermuteBlockMassOutbreak(outbreakblock);
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            linkLabel1.LinkVisited = true;
+            System.Diagnostics.Process.Start("explorer.exe","https://www.github.com/kwsch/EtumrepMMO/wiki");
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Program.main.etumrepdisplay.Clear();
+            const string entityFolderName = "mons";
+            var inputs = GroupSeedFinder.GetInputs(entityFolderName);
+            if (inputs.Count < 2)
+            {
+               Program.main.etumrepdisplay.AppendText("Insufficient inputs found in folder. Needs to have two (2) or more dumped files.");
+            }
+            else if (inputs.Count > 4)
+            {
+                Program.main.etumrepdisplay.AppendText("Too many inputs found in folder. Needs to have only the first four (4) Pokémon.");
+            }
+            else
+            {
+                var result = GroupSeedFinder.FindSeed(inputs);
+                if (result is default(ulong))
+                {
+                    Program.main.etumrepdisplay.AppendText($"No group seeds found with the input data. Double check your inputs (valid inputs: {inputs.Count}).");
+                }
+                else
+                {
+                    Program.main.etumrepdisplay.AppendText("Found seed!");
+                    Program.main.etumrepdisplay.AppendText(string.Format("0x{0:X}",result));
+                }
+            }
         }
     }
 }

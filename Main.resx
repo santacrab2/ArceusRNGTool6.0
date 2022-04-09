@@ -57,6 +57,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Make sure you have your PA8 files in a folder named "mons"
+next to this exe before running this mode.
+This mode is CPU intensive and may freeze your computer while it calculates.
+We are not liable for any damages occured when using this mode, use at your own risk.
+
+Once it calculates your seed head to the non-cfw pathfinder tab to find the
+path to your preferred pokemon.
+
+
+
+This mode is just a GUI interface for Kurt's work and pretty much all credit goes to him.</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

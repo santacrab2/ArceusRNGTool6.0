@@ -7,11 +7,32 @@ using PKHeX.Core;
 using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PermuteMMO.Lib;
 
 namespace PLARNGGui
 {
     public class OutbreakRoutines
     {
+        public static int spawncount;
+        public void ReadOutbreakJubilife(Span<byte> data)
+        {
+            var block = new MassOutbreakSet8a(data);
+            for(int i = 0; i < 5; i++)
+            {
+                var spawner = block[i];
+                var areaName = AreaUtil.AreaTable[spawner.AreaHash];
+                if (!spawner.HasOutbreak)
+                {
+                    Program.main.OutbreakDisplay.AppendText($"No outbreak in {areaName}.\n");
+                    continue;
+                }
+                spawncount = spawner.BaseCount;
+                var mainrng = new Xoroshiro128Plus(spawner.SpawnSeed);
+                Program.main.OutbreakDisplay.AppendText($"Outbreak in {areaName} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
+                Program.main.Teleporterdisplay.AppendText($"Outbreak in {areaName} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n");
+                GenerateCurrentMassOutbreak(mainrng);
+            }
+        }
         public void ReadOutbreakID()
         {
             ulong seed1 = 0x82A2B175229D6A5B;
@@ -93,7 +114,11 @@ namespace PLARNGGui
             ulong groupseed = mainrng.Next();
             mainrng = new Xoroshiro128Plus(groupseed);
             var respawnrng = new Xoroshiro128Plus(groupseed);
-            int spawns = Convert.ToInt32(Program.main.outbreakspawncount.Text);
+            int spawns;
+            if (Program.main.inmapbox.Checked)
+                spawns = Convert.ToInt32(Program.main.outbreakspawncount.Text);
+            else
+                spawns = spawncount;
             for (int i = 1; i < spawns - 3; i++)
             {
                 GeneratorSeed = respawnrng.Next();
@@ -105,7 +130,7 @@ namespace PLARNGGui
                     alpha = true;
                 fixedseed = fixedrng.Next();
                 (shiny, encryption_constant, pid, ivs, ability, gender, nature, shinyseed) = Main.rngroutes.GenerateFromSeed(fixedseed, Convert.ToInt32(Program.main.outbreakShinyrolls.Text), alpha ? 3 : 0);
-                Program.main.OutbreakDisplay.AppendText($"Respawn: {i}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                Program.main.OutbreakDisplay.AppendText($"Respawn: {i}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nSeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
                 alpha = false;
             }
             return;

@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-
+using PermuteMMO.Lib;
 using PKHeX.Core;
 
 namespace PermuteMMO.Lib;
@@ -13,10 +13,11 @@ public static class SpawnGenerator
     public static readonly IReadOnlyDictionary<ulong, SlotDetail[]> EncounterTables = JsonDecoder.GetDictionary(mmojson);
 
     #region Public Mutable - Useful for DLL consumers
-    public static SAV8LA SaveFile { private get; set; } = GetFake();
+    public static SAV8LA SaveFile { get; set; } = GetFake();
     public static PokedexSave8a Pokedex => SaveFile.PokedexSave;
     public static byte[] BackingArray => SaveFile.Blocks.GetBlock(0x02168706).Data;
     public static bool HasCharm { get; set; } = true;
+    public static int MaxShinyRolls { get; set; }
     #endregion
 
     private static SAV8LA GetFake()
@@ -32,37 +33,89 @@ public static class SpawnGenerator
     }
 
     /// <summary>
+    /// Checks if a Table (or species) is skittish.
+    /// </summary>
+    /// <param name="table">Table hash or species ID.</param>
+    /// <returns>True if skittish.</returns>
+    public static bool IsSkittish(ulong table)
+    {
+        var slots = GetSlots(table);
+        return slots.Any(z => z.IsSkittish);
+    }
+
+    /// <summary>
     /// Generates an <see cref="EntityResult"/> from the input <see cref="seed"/> and <see cref="table"/>.
     /// </summary>
-    public static EntityResult Generate(in ulong seed, in ulong table)
+    public static EntityResult Generate(in ulong seed, in ulong table, SpawnType type)
     {
         var slotrng = new Xoroshiro128Plus(seed);
 
-        var slots = EncounterTables[table];
+        var slots = GetSlots(table);
         var slotSum = slots.Sum(z => z.Rate);
         var slotroll = slotrng.NextFloat(slotSum);
         var slot = GetSlot(slots, slotroll);
         var genseed = slotrng.Next();
+        var level = GetLevel(slot, slotrng);
 
         // Determine stuff from slot detail
         var gt = PersonalTable.LA.GetFormEntry(slot.Species, slot.Form).Gender;
 
         // Get roll count from save file
-        int shinyRolls = GetRerollCount(slot.Species);
+        int shinyRolls = GetRerollCount(slot.Species, type);
 
-        var result = GeneratePokemon(genseed, shinyRolls, slot.FlawlessIVs, gt, slot.IsAlpha);
-        result.Level = GetLevel(slot, slotrng);
-        result.IsAlpha = slot.IsAlpha;
-        result.Seed = seed;
-        result.Name = slot.Name;
+        var result = new EntityResult
+        {
+            Species = slot.Species,
+            Form = slot.Form,
+            Level = level,
+            IsAlpha = slot.IsAlpha,
+
+            Seed = seed,
+            Name = slot.Name,
+        };
+
+        GeneratePokemon(result, genseed, shinyRolls, slot.FlawlessIVs, gt);
         return result;
     }
 
-    private static int GetRerollCount(in int species)
+    private static readonly Dictionary<ushort, SlotDetail[]> Outbreaks = new();
+    private static readonly int[] FakeLevels = { 0, 1, 2 };
+
+    private static SlotDetail[] GetSlots(in ulong table)
     {
+        if (table > 1000)
+            return EncounterTables[table];
+
+        ushort species = (ushort)table;
+        return GetFakeOutbreak(species);
+    }
+
+    private static SlotDetail[] GetFakeOutbreak(ushort species)
+    {
+        if (Outbreaks.TryGetValue(species, out var value))
+            return value;
+
+        var name = SpeciesName.GetSpeciesName(species, 2);
+        if (species == (ushort)Species.Basculin)
+            name = $"{name}-2";
+        value = new[]
+        {
+            new SlotDetail(100, name, false, FakeLevels, 0),
+            new SlotDetail(001, name, true, FakeLevels, 3),
+        };
+        foreach (var slot in value)
+            slot.SetSpecies();
+
+        return Outbreaks[species] = value;
+    }
+
+    private static int GetRerollCount(in int species, SpawnType type)
+    {
+        if (MaxShinyRolls is not 0)
+            return MaxShinyRolls;
         bool perfect = Pokedex.IsPerfect(species);
         bool complete = Pokedex.IsComplete(species);
-        return 1 + (complete ? 1 : 0) + (perfect ? 2 : 0) + (HasCharm ? 3 : 0) + 12;
+        return 1 + (complete ? 1 : 0) + (perfect ? 2 : 0) + (HasCharm ? 3 : 0) + (int)type;
     }
 
     private static int GetLevel(SlotDetail slot, Xoroshiro128Plus slotrng)
@@ -87,18 +140,13 @@ public static class SpawnGenerator
         throw new ArgumentOutOfRangeException(nameof(slotroll));
     }
 
-    public static EntityResult GeneratePokemon(in ulong seed, in int shinyrolls, in int flawless, in int genderRatio, in bool isAlpha)
+    public static void GeneratePokemon(EntityResult result, in ulong seed, in int shinyrolls, in int flawless, in int genderRatio)
     {
         var rng = new Xoroshiro128Plus(seed);
-        var result = new EntityResult();
 
         // Encryption Constant
-        var encryptionConstant = (uint)rng.NextInt();
-        result.EC = encryptionConstant;
-
-        // Fake TID
-        var fakeTID = (uint)rng.NextInt();
-        result.FakeTID = fakeTID;
+        result.EC = (uint)rng.NextInt();
+        result.FakeTID = (uint)rng.NextInt();
 
         // PID
         uint pid;
@@ -107,21 +155,21 @@ public static class SpawnGenerator
         {
             ++ctr;
             pid = (uint)rng.NextInt();
-            var ShinyXor = GetShinyXor(pid, fakeTID);
+            var ShinyXor = GetShinyXor(pid, result.FakeTID);
             var isShiny = result.IsShiny = ShinyXor < 16;
             if (!isShiny)
                 continue;
 
-            result.RollCount = ctr;
             result.ShinyXor = ShinyXor;
-            result.PermittedRolls = shinyrolls;
+            result.RollCountUsed = ctr;
+            result.RollCountAllowed = shinyrolls;
             break;
         } while (ctr < shinyrolls);
         result.PID = pid;
 
-        const int UNSET = -1;
-        int[] ivs = { UNSET, UNSET, UNSET, UNSET, UNSET, UNSET };
-        const int MAX = 31;
+        const byte UNSET = byte.MaxValue;
+        var ivs = result.IVs;
+        const byte MAX = 31;
         for (int i = 0; i < flawless; i++)
         {
             int index;
@@ -134,34 +182,22 @@ public static class SpawnGenerator
         for (int i = 0; i < ivs.Length; i++)
         {
             if (ivs[i] == UNSET)
-                ivs[i] = (int)rng.NextInt(32);
+                ivs[i] = (byte)rng.NextInt(32);
         }
-
-        var ability = (int)rng.NextInt(2);
-
-        int gender = genderRatio switch
+        result.Ability = (byte)rng.NextInt(2);
+        result.Gender = genderRatio switch
         {
             PersonalInfo.RatioMagicGenderless => 2,
             PersonalInfo.RatioMagicFemale => 1,
             PersonalInfo.RatioMagicMale => 0,
-            _ => (int)rng.NextInt(252) + 1 < genderRatio ? 1 : 0,
+            _ => (int)rng.NextInt(252) + 1 < genderRatio ? (byte)1: (byte)0,
         };
+        result.Nature = (byte)rng.NextInt(25);
 
-        int nature = (int)rng.NextInt(25);
-
-        var (height, weight) = isAlpha
+        (result.Height, result.Weight) = result.IsAlpha
             ? (byte.MaxValue, byte.MaxValue)
             : ((byte)((int)rng.NextInt(0x81) + (int)rng.NextInt(0x80)),
                (byte)((int)rng.NextInt(0x81) + (int)rng.NextInt(0x80)));
-
-        result.Ability = ability;
-        result.Gender = gender;
-        result.Nature = nature;
-        result.Height = height;
-        result.Weight = weight;
-        result.ivs = ivs;
-
-        return result;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
