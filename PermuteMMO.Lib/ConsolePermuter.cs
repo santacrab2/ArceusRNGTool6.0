@@ -82,7 +82,7 @@ public static class ConsolePermuter
                 bool skittishBonus = SpawnGenerator.IsSkittish(spawn.BonusTable);
                 var lines = result.GetLines(skittishBase, skittishBonus);
                 foreach (var line in lines)
-                    Program.main.MassiveDisplay.AppendText(line+"\n\n");
+                    Program.main.MassiveDisplay.AppendText(line+"\n");
              
             }
 

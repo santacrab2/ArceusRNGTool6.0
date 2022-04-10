@@ -12,9 +12,9 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
         // 10+7 spawner has 6+(3)+3=12 max permutations, +"SB|", remove last |; (3*12+2)=37.
         var line = $"Path: {steps}\n{(IsBonus ? "Bonus " : "")}Spawn:{SpawnIndex}\n{Entity.GetSummary(Advances, skittishBase, skittishBonus)}";
         if (prev != null)
-            line += "~~ Chain result!\n";
+            line += "Chain result!\n";
         if (isActionMultiResult)
-            line += "~~ Spawns multiple results!\n";
+            line += "Spawns multiple results!\n";
         return line;
     }
 
@@ -25,6 +25,6 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
             return steps;
 
         var prevSeq = p.GetSteps();
-        return string.Concat(Enumerable.Repeat("-> ", (prevSeq.Length+2)/3)) + steps[(prevSeq.Length + 1)..];
+        return string.Concat(Enumerable.Repeat("prev ", (prevSeq.Length+2)/3)) + steps[(prevSeq.Length + 1)..];
     }
 }
