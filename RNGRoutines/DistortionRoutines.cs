@@ -36,8 +36,18 @@ namespace PLARNGGui
                     case Enums.Maps.CoronetHighlands: disptr = new long[] { 0x42CC4D8, 0xC0, 0x1C0, 0x818 + i * 0x8, 0x18, 0x430, 0xC0 }; encounter_slot_sum = 382; break;
                     case Enums.Maps.AlabasterIcelands: disptr = new long[] { 0x42CC4D8, 0xC0, 0x1C0, 0x948 + i * 0x8, 0x18, 0x430, 0xC0 }; encounter_slot_sum = 259; break;
                 }
-                var SpawnerOff = Main.routes.PointerAll(disptr).Result;
-                var GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                ulong SpawnerOff;
+                byte[] GeneratorSeed;
+                if (!Main.USB)
+                {
+                    SpawnerOff = Main.routes.PointerAll(disptr).Result;
+                    GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                }
+                else
+                {
+                    SpawnerOff = Main.usbroutes.PointerAll(disptr).Result;
+                    GeneratorSeed = Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                }
                 
                 var group_seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
                 if(group_seed != 0)
@@ -80,9 +90,18 @@ namespace PLARNGGui
         public async void DistortionMaker()
         {
             ulong ActivateDistortion = 0x024A0428;
-            var MainNsoBase = await Main.routes.GetMainNsoBaseAsync();
-            await Main.routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x5280010A), MainNsoBase + ActivateDistortion);
-            await Main.routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x7100052A), MainNsoBase + ActivateDistortion);
+            if (!Main.USB)
+            {
+                var MainNsoBase = await Main.routes.GetMainNsoBaseAsync();
+                await Main.routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x5280010A), MainNsoBase + ActivateDistortion);
+                await Main.routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x7100052A), MainNsoBase + ActivateDistortion);
+            }
+            else
+            {
+                var MainNsoBase = await Main.usbroutes.GetMainNsoBaseAsync();
+                await Main.usbroutes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x5280010A), MainNsoBase + ActivateDistortion);
+                await Main.usbroutes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(0x7100052A), MainNsoBase + ActivateDistortion);
+            }
 
         }
         public (string,bool) GetDistortionSpecies(double encslot)

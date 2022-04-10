@@ -56,6 +56,11 @@ namespace PLARNGGui
             AlphaOnly
              
         }
+        public enum ConnectionType
+        {
+            WiFi,
+            USB
+        }
         public static string[] AgressiveSpecies = new string[] {
            "Abomasnow",
 "Alakazam",

@@ -46,42 +46,87 @@ namespace PLARNGGui
             var group_id = minimum + 30;
             ulong groupseed = 0;
             var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
-            var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-            while (groupseed == 0 && group_id != minimum)
+            ulong SpawnerOff;
+            if (!Main.USB)
             {
-                group_id -= 1;
-                SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
                 SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-                groupseed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result, 0);
+                while (groupseed == 0 && group_id != minimum)
+                {
+                    group_id -= 1;
+                    SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
+                    SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
+                    groupseed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result, 0);
+                }
+                if (group_id == minimum)
+                {
+                    Program.main.OutbreakDisplay.AppendText("No Outbreaks Found.");
+                    return;
+                }
             }
-            if (group_id == minimum)
+            else
             {
-                Program.main.OutbreakDisplay.AppendText("No Outbreaks Found.");
-                return;
+                SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                while (groupseed == 0 && group_id != minimum)
+                {
+                    group_id -= 1;
+                    SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
+                    SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                    groupseed = BitConverter.ToUInt64(Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result, 0);
+                }
+                if (group_id == minimum)
+                {
+                    Program.main.OutbreakDisplay.AppendText("No Outbreaks Found.");
+                    return;
+                }
             }
             Program.main.outbreakgroupid.Text = $"{group_id}";
 
-
+            byte[] GeneratorSeed;
             SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x20 };
-            SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-            var GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
-            Program.main.OutbreakDisplay.AppendText($"Generator Seed: {BitConverter.ToString(GeneratorSeed).Replace("-", "")}\n");
-            var group_seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
-            Program.main.OutbreakDisplay.AppendText($"Group Seed: {string.Format("0x{0:X}", group_seed)}\n");
-            var spawns = 0;
-            for (int i = 0; i < 4; i++)
+            if (!Main.USB)
             {
-                SpawnerOffpoint = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x60 + i * 0x50 };
                 SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-                spawns = BitConverter.ToInt16(Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 2).Result, 0);
-                if (10 <= spawns && spawns <= 15)
+                GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                Program.main.OutbreakDisplay.AppendText($"Generator Seed: {BitConverter.ToString(GeneratorSeed).Replace("-", "")}\n");
+                var group_seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
+                Program.main.OutbreakDisplay.AppendText($"Group Seed: {string.Format("0x{0:X}", group_seed)}\n");
+                var spawns = 0;
+                for (int i = 0; i < 4; i++)
                 {
-                    Program.main.outbreakspawncount.Text = $"{spawns}";
-                    break;
+                    SpawnerOffpoint = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x60 + i * 0x50 };
+                    SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
+                    spawns = BitConverter.ToInt16(Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 2).Result, 0);
+                    if (10 <= spawns && spawns <= 15)
+                    {
+                        Program.main.outbreakspawncount.Text = $"{spawns}";
+                        break;
+                    }
                 }
+                var main_rng = new Xoroshiro128Plus(group_seed);
+                GenerateCurrentMassOutbreak(main_rng);
             }
-            var main_rng = new Xoroshiro128Plus(group_seed);
-            GenerateCurrentMassOutbreak(main_rng);
+            else
+            {
+                SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                GeneratorSeed = Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                Program.main.OutbreakDisplay.AppendText($"Generator Seed: {BitConverter.ToString(GeneratorSeed).Replace("-", "")}\n");
+                var group_seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
+                Program.main.OutbreakDisplay.AppendText($"Group Seed: {string.Format("0x{0:X}", group_seed)}\n");
+                var spawns = 0;
+                for (int i = 0; i < 4; i++)
+                {
+                    SpawnerOffpoint = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x60 + i * 0x50 };
+                    SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                    spawns = BitConverter.ToInt16(Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 2).Result, 0);
+                    if (10 <= spawns && spawns <= 15)
+                    {
+                        Program.main.outbreakspawncount.Text = $"{spawns}";
+                        break;
+                    }
+                }
+                var main_rng = new Xoroshiro128Plus(group_seed);
+                GenerateCurrentMassOutbreak(main_rng);
+            }
         }
         public void GenerateCurrentMassOutbreak(Xoroshiro128Plus mainrng)
         {
@@ -137,9 +182,18 @@ namespace PLARNGGui
         }
         public void GenerateNextOutbreakMatch()
         {
+            byte[] startGeneratorSeed;
             var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + Convert.ToInt32(Program.main.outbreakgroupid.Text) * 0x440 + 0x20 };
-            var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-            var startGeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+            if (!Main.USB)
+            {
+                var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
+                startGeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+            }
+            else
+            {
+                var SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                startGeneratorSeed = Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+            }
             Program.main.OutbreakDisplay.AppendText($"Generator Seed: {BitConverter.ToString(startGeneratorSeed).Replace("-", "")}\n");
             var group_seed = (BitConverter.ToUInt64(startGeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
             Program.main.OutbreakDisplay.AppendText($"Group Seed: {string.Format("0x{0:X}", group_seed)}\n");

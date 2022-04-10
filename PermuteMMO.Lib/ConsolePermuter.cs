@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using PKHeX.Core;
 using PLARNGGui;
-using System.Net;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace PermuteMMO.Lib;
 
@@ -25,7 +25,7 @@ public static class ConsolePermuter
             var areaName = AreaUtil.AreaTable[area.AreaHash];
             if (!area.IsActive)
             {
-                Program.main.MassiveDisplay.AppendText($"No outbreak in {areaName}.\n");
+                Console.WriteLine($"No outbreak in {areaName}.");
                 continue;
             }
             Debug.Assert(area.IsValid);
@@ -41,9 +41,18 @@ public static class ConsolePermuter
                 var seed = spawner.SpawnSeed;
                 if (Program.main.mmoinmap.Checked)
                 {
+                    ulong inmapseedoff;
                     var inmapseedptr = new long[] { 0x42EEEE8, 0x78, 0xD48 + (j * 0x08), 0x58, 0x38, 0x478, 0x20 };
-                    var inmapseedoff = Main.routes.PointerAll(inmapseedptr).Result;
-                    seed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(inmapseedoff, 8).Result);
+                    if (!Main.USB)
+                    {
+                        inmapseedoff = Main.routes.PointerAll(inmapseedptr).Result;
+                        seed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(inmapseedoff, 8).Result);
+                    }
+                    else
+                    {
+                        inmapseedoff = Main.usbroutes.PointerAll(inmapseedptr).Result;
+                        seed = BitConverter.ToUInt64(Main.usbroutes.ReadBytesAbsoluteAsync(inmapseedoff, 8).Result);
+                    }
                     var rnger = new Xoroshiro128Plus(seed);
                     seed = rnger.Next();
                 }
@@ -66,12 +75,15 @@ public static class ConsolePermuter
                     hasPrintedAreaMMO = true;
                 }
 
-                Program.main.MassiveDisplay.AppendText($"Spawner {j+1} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
+                Program.main.MassiveDisplay.AppendText($"Spawner {j + 1} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
                 Program.main.Teleporterdisplay.AppendText($"{areaName}\nSpawner {j + 1} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n\n");
                 Program.main.MassiveDisplay.AppendText($"First Round Spawns: {spawn.BaseCount} Bonus Round Spawns: {spawn.BonusCount}\n");
-                bool hasSkittish = SpawnGenerator.IsSkittish(spawn.BaseTable);
-                result.PrintResults(hasSkittish,true);
-                
+                bool skittishBase = SpawnGenerator.IsSkittish(spawn.BaseTable);
+                bool skittishBonus = SpawnGenerator.IsSkittish(spawn.BonusTable);
+                var lines = result.GetLines(skittishBase, skittishBonus);
+                foreach (var line in lines)
+                    Program.main.MassiveDisplay.AppendText(line+"\n\n");
+             
             }
 
             if (!hasPrintedAreaMMO)
@@ -81,7 +93,6 @@ public static class ConsolePermuter
             else
             {
                 Program.main.MassiveDisplay.AppendText("Done permuting area.\n\n");
-               
             }
         }
     }
@@ -113,18 +124,36 @@ public static class ConsolePermuter
                 var group_id = minimum + 30;
                 ulong groupseed = 0;
                 var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
-                var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-                while (groupseed == 0 && group_id != minimum)
+                if (!Main.USB)
                 {
-                    group_id -= 1;
-                    SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
+                    var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
+                    while (groupseed == 0 && group_id != minimum)
+                    {
+                        group_id -= 1;
+                        SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
+                        SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
+                        groupseed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result, 0);
+                    }
+                    SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x20 };
                     SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-                    groupseed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result, 0);
+                    var GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                    seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
                 }
-                SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x20 };
-                SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-                var GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
-                seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
+                else
+                {
+                    var SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                    while (groupseed == 0 && group_id != minimum)
+                    {
+                        group_id -= 1;
+                        SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
+                        SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                        groupseed = BitConverter.ToUInt64(Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result, 0);
+                    }
+                    SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x20 };
+                    SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                    var GeneratorSeed = Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                    seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
+                }
                 Program.main.outbreakgroupid.Text = group_id.ToString();
             }
             var spawn = new SpawnInfo
@@ -141,17 +170,17 @@ public static class ConsolePermuter
                 Program.main.Teleporterdisplay.AppendText($"Outbreak shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n");
                 continue;
             }
-
             Program.main.OutbreakDisplay.AppendText($"Found paths for {(Species)spawner.DisplaySpecies} Mass Outbreak in {areaName}:\n");
             Program.main.OutbreakDisplay.AppendText($"Outbreak shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
             Program.main.Teleporterdisplay.AppendText($"Outbreak shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n");
             Program.main.OutbreakDisplay.AppendText($"Spawn Count: {spawn.BaseCount}\n");
-            bool hasSkittish = SpawnGenerator.IsSkittish(spawner.DisplaySpecies);
-            result.PrintResults(hasSkittish,false);
-            
+            bool skittishBase = SpawnGenerator.IsSkittish(spawner.DisplaySpecies);
+            var lines = result.GetLines(skittishBase);
+            foreach (var line in lines)
+                Program.main.OutbreakDisplay.AppendText(line+"\n");
+            Console.WriteLine();
         }
         Program.main.OutbreakDisplay.AppendText("Done permuting Mass Outbreaks.\n\n");
-     
     }
 
     /// <summary>
@@ -159,23 +188,25 @@ public static class ConsolePermuter
     /// </summary>
     public static void PermuteSingle(SpawnInfo spawn, ulong seed, ushort species)
     {
-        Console.WriteLine($"Permuting all possible paths for {seed:X16}.");
-        Console.WriteLine($"Base Species: {SpeciesName.GetSpeciesName(species, 2)}");
-        Console.WriteLine($"Parameters: {spawn}");
-        Console.WriteLine();
+        Program.main.nocfwpathdisplay.AppendText($"Permuting all possible paths for {seed:X16}.");
+        Program.main.nocfwpathdisplay.AppendText($"Base Species: {SpeciesName.GetSpeciesName(species, 2)}");
+    
 
         var result = Permuter.Permute(spawn, seed);
         if (!result.HasResults)
         {
-            Console.WriteLine("No results found. Try another outbreak! :(");
+            Program.main.nocfwpathdisplay.AppendText("No results found. Try another outbreak! :(");
         }
         else
         {
-            bool hasSkittish = SpawnGenerator.IsSkittish(spawn.BaseTable);
-            result.PrintResults(hasSkittish,false);
+            bool skittishBase = SpawnGenerator.IsSkittish(spawn.BaseTable);
+            bool skittishBonus = SpawnGenerator.IsSkittish(spawn.BonusTable);
+            var lines = result.GetLines(skittishBase, skittishBonus);
+            foreach (var line in lines)
+                Program.main.nocfwpathdisplay.AppendText(line+"\n");
         }
 
-        Console.WriteLine();
-        Console.WriteLine("Done.");
+        Program.main.nocfwpathdisplay.AppendText("\n");
+        Program.main.nocfwpathdisplay.AppendText("Done.");
     }
 }

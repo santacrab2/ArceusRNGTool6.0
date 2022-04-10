@@ -21,11 +21,19 @@ namespace PLARNGGui
                 for (int i = 0; i < 15; i++)
                 {
                     var outbreakpointer = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x1d4 + (i * 0x90) + (0xB80 * l) };
-                    var Outbreakoff = Main.routes.PointerAll(outbreakpointer).Result;
+                    ulong Outbreakoff;
+                    if(!Main.USB)
+                        Outbreakoff = Main.routes.PointerAll(outbreakpointer).Result;
+                    else
+                        Outbreakoff = Main.usbroutes.PointerAll(outbreakpointer).Result;
 
                     if (i == 0)
                     {
-                        var location = Main.routes.ReadBytesAbsoluteAsync(Outbreakoff - 0x24, 2).Result;
+                        byte[] location;
+                        if(!Main.USB)
+                            location = Main.routes.ReadBytesAbsoluteAsync(Outbreakoff - 0x24, 2).Result;
+                        else
+                            location = Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff - 0x24, 2).Result;
                         map = BitConverter.ToString(location);
                         switch (map)
                         {
@@ -39,7 +47,11 @@ namespace PLARNGGui
 
                         Program.main.MassiveDisplay.AppendText($"Searching {map}\n");
                     }
-                    int species = BitConverter.ToUInt16(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff, 2).Result, 0);
+                    int species;
+                    if (!Main.USB)
+                        species = BitConverter.ToUInt16(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff, 2).Result, 0);
+                    else
+                        species = BitConverter.ToUInt16(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff, 2).Result, 0);
                     Task.Delay(1000);
 
                     if (species != 0)
@@ -55,23 +67,53 @@ namespace PLARNGGui
                         ulong gender = new ulong();
                         ulong nature = new ulong();
                         ulong shinyseed = new ulong();
-                        var spawncoordx = BitConverter.ToSingle(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff - 0x14, 4).Result, 0);
-                        var spawncoordy = BitConverter.ToSingle(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff - 0x10, 4).Result, 0);
-                        var spawncoordz = BitConverter.ToSingle(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff - 0x0C, 4).Result, 0);
-                        Program.main.MassiveDisplay.AppendText($"Coordinates: X: {spawncoordx} Y: {spawncoordy} Z: {spawncoordz}\n");
-                        var groupseed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x44, 8).Result, 0);
-                        var maxspawns = BitConverter.ToInt32(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x4c, 4).Result, 0);
-                       
-                        Program.main.MassiveDisplay.AppendText($"Max spawns: {maxspawns}\n");
-                        var currspawns = BitConverter.ToInt32(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x50, 4).Result, 0);
-                        Program.main.MassiveDisplay.AppendText($"Current spawns: {currspawns}\n\n");
-                        var bonusround = BitConverter.ToUInt16(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x18, 2).Result, 0);
-                        var bonustable = GetEncountersum(i, true,l);
-                        bool bonus = false;
-                        if (bonustable.Item1 != null)
-                            bonus = true;
-                        var bonuscount = BitConverter.ToInt16(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x60, 2).Result, 0);
-                    
+                        float spawncoordx;
+                        float spawncoordy;
+                        float spawncoordz;
+                        ulong groupseed;
+                        int maxspawns;
+                        int currspawns;
+                        ushort bonusround;
+                        int bonuscount;
+                        bool bonus;
+                        if (!Main.USB)
+                        {
+                            spawncoordx = BitConverter.ToSingle(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff - 0x14, 4).Result, 0);
+                            spawncoordy = BitConverter.ToSingle(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff - 0x10, 4).Result, 0);
+                            spawncoordz = BitConverter.ToSingle(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff - 0x0C, 4).Result, 0);
+                            Program.main.MassiveDisplay.AppendText($"Coordinates: X: {spawncoordx} Y: {spawncoordy} Z: {spawncoordz}\n");
+                            groupseed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x44, 8).Result, 0);
+                            maxspawns = BitConverter.ToInt32(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x4c, 4).Result, 0);
+
+                            Program.main.MassiveDisplay.AppendText($"Max spawns: {maxspawns}\n");
+                            currspawns = BitConverter.ToInt32(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x50, 4).Result, 0);
+                            Program.main.MassiveDisplay.AppendText($"Current spawns: {currspawns}\n\n");
+                            bonusround = BitConverter.ToUInt16(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x18, 2).Result, 0);
+                            var bonustable = GetEncountersum(i, true, l);
+                            bonus = false;
+                            if (bonustable.Item1 != null)
+                                bonus = true;
+                            bonuscount = BitConverter.ToInt16(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x60, 2).Result, 0);
+                        }
+                        else
+                        {
+                            spawncoordx = BitConverter.ToSingle(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff - 0x14, 4).Result, 0);
+                            spawncoordy = BitConverter.ToSingle(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff - 0x10, 4).Result, 0);
+                            spawncoordz = BitConverter.ToSingle(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff - 0x0C, 4).Result, 0);
+                            Program.main.MassiveDisplay.AppendText($"Coordinates: X: {spawncoordx} Y: {spawncoordy} Z: {spawncoordz}\n");
+                            groupseed = BitConverter.ToUInt64(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff + 0x44, 8).Result, 0);
+                            maxspawns = BitConverter.ToInt32(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff + 0x4c, 4).Result, 0);
+
+                            Program.main.MassiveDisplay.AppendText($"Max spawns: {maxspawns}\n");
+                            currspawns = BitConverter.ToInt32(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff + 0x50, 4).Result, 0);
+                            Program.main.MassiveDisplay.AppendText($"Current spawns: {currspawns}\n\n");
+                            bonusround = BitConverter.ToUInt16(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff + 0x18, 2).Result, 0);
+                            var bonustable = GetEncountersum(i, true, l);
+                            bonus = false;
+                            if (bonustable.Item1 != null)
+                                bonus = true;
+                            bonuscount = BitConverter.ToInt16(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff + 0x60, 2).Result, 0);
+                        }
                        
                         var mainrng = new Xoroshiro128Plus(groupseed);
                         for (int h = 0; h < 4; h++)
@@ -195,8 +237,18 @@ namespace PLARNGGui
             }
             else
                 pointer = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x1d4 + (groupid * 0x90) + (0xb80 * map) + 0x24 };
-            var pointeroff = Main.routes.PointerAll(pointer).Result;
-            var enclong = "0x" + LittleEndian( BitConverter.ToString(Main.routes.ReadBytesAbsoluteAsync(pointeroff, 8).Result, 0).ToString().ToUpper().Replace("-",""));
+            ulong pointeroff;
+            string? enclong;
+            if (!Main.USB)
+            {
+                pointeroff = Main.routes.PointerAll(pointer).Result;
+                enclong = "0x" + LittleEndian(BitConverter.ToString(Main.routes.ReadBytesAbsoluteAsync(pointeroff, 8).Result, 0).ToString().ToUpper().Replace("-", ""));
+            }
+            else
+            {
+                pointeroff = Main.usbroutes.PointerAll(pointer).Result;
+                enclong = "0x" + LittleEndian(BitConverter.ToString(Main.usbroutes.ReadBytesAbsoluteAsync(pointeroff, 8).Result, 0).ToString().ToUpper().Replace("-", ""));
+            }
             
             var MMOSpawnersjson = new WebClient().DownloadString($"https://raw.githubusercontent.com/zyro670/JS-Finder/notabranch/Resources/pla_spawners/jsons/massivemassoutbreaks.json");
             mmoslots = JsonConvert.DeserializeObject<Dictionary<string, SpawnerMMO[]>>(MMOSpawnersjson);
@@ -223,14 +275,34 @@ namespace PLARNGGui
         public ulong getbonusseed(int groupid,int rolls, int map,int[] paths)
         {
             var outbreakpointer = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x1d4 + (groupid * 0x90) + (0xB80 * map) };
-            var Outbreakoff = Main.routes.PointerAll(outbreakpointer).Result;
-            int species = BitConverter.ToUInt16(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff, 2).Result, 0);
+            ulong Outbreakoff;
+            int species;
+            if (!Main.USB)
+            {
+                Outbreakoff = Main.routes.PointerAll(outbreakpointer).Result;
+                species = BitConverter.ToUInt16(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff, 2).Result, 0);
+            }
+            else
+            {
+                Outbreakoff = Main.usbroutes.PointerAll(outbreakpointer).Result;
+                species = BitConverter.ToUInt16(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff, 2).Result, 0);
+            }
             if (species != 0)
             {
                 if (species == 201)
                     rolls = 19;
-                var groupseed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x44, 8).Result, 0);
-                var maxspawns = BitConverter.ToInt32(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x4c, 4).Result, 0);
+                ulong groupseed;
+                int maxspawns;
+                if (!Main.USB)
+                {
+                    groupseed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x44, 8).Result, 0);
+                    maxspawns = BitConverter.ToInt32(Main.routes.ReadBytesAbsoluteAsync(Outbreakoff + 0x4c, 4).Result, 0);
+                }
+                else
+                {
+                    groupseed = BitConverter.ToUInt64(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff + 0x44, 8).Result, 0);
+                    maxspawns = BitConverter.ToInt32(Main.usbroutes.ReadBytesAbsoluteAsync(Outbreakoff + 0x4c, 4).Result, 0);
+                }
                 var mainrng = new Xoroshiro128Plus(groupseed);
                 for(int b = 0; b < 4; b++)
                 {

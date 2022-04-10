@@ -200,8 +200,17 @@ namespace PLARNGGui
             {
                 var groupid = f;
                 var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + groupid * 0x440 + 0x20 };
-                var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-                var GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                byte[] GeneratorSeed;
+                if (!Main.USB)
+                {
+                    var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
+                    GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                }
+                else
+                {
+                    var SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                    GeneratorSeed = Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                }
                 var group_seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
                 var mainrng = new Xoroshiro128Plus(group_seed);
                 var groupname = spawnmap[$"{f}"]["name"];

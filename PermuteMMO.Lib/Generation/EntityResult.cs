@@ -51,13 +51,13 @@ public sealed class EntityResult
             _ => " (M)",
         };
         var feasibility = GetFeasibility(advances, skittishBase, skittishBonus);
-        return $"{alpha}{Name}{gender}\nPID:{pid}\nEC:{ec}\n{shiny}Level: {level}\nIVs:{ivs}{nature,-8}{feasibility}\n\n";
+        return $"{alpha}{Name}{gender}\nPID:{pid}\nEC:{ec}\n{shiny}Level: {level}\nIVs:{ivs}{nature,-8}{feasibility}\n";
     }
 
     private static string GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
     {
         if (!advances.IsAnyMulti())
-            return "Single advances!\n";
+            return "-- Single advances!";
 
         if (!skittishBase && !skittishBonus)
             return string.Empty;
@@ -75,8 +75,8 @@ public sealed class EntityResult
         }
 
         if (skittishMulti)
-            return "-- Skittish: Aggressive!\n";
-        return     "-- Skittish: Single advances!\n";
+            return "-- Skittish: Aggressive!";
+        return     "-- Skittish: Single advances!";
     }
 
     private static int GetBonusStartIndex(ReadOnlySpan<Advance> advances)

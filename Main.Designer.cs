@@ -121,12 +121,27 @@ namespace PLARNGGui
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.etumrepdisplay = new System.Windows.Forms.RichTextBox();
             this.nocfwpathtab = new System.Windows.Forms.TabPage();
+            this.nocfwpathsearchsettings = new System.Windows.Forms.ComboBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.nocfwpathfind = new System.Windows.Forms.Button();
+            this.bonustableui = new System.Windows.Forms.TextBox();
+            this.label35 = new System.Windows.Forms.Label();
+            this.bonuscountui = new System.Windows.Forms.TextBox();
+            this.label34 = new System.Windows.Forms.Label();
+            this.basetableui = new System.Windows.Forms.TextBox();
+            this.label33 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.basecountui = new System.Windows.Forms.TextBox();
+            this.label31 = new System.Windows.Forms.Label();
+            this.speciespath = new System.Windows.Forms.ComboBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.seedui = new System.Windows.Forms.TextBox();
             this.nocfwpathdisplay = new System.Windows.Forms.RichTextBox();
             this.IP = new System.Windows.Forms.TextBox();
             this.connect = new System.Windows.Forms.Button();
             this.Disconnect = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label30 = new System.Windows.Forms.Label();
+            this.connecttype = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.StandardSpawnstab.SuspendLayout();
             this.Outbreaktab.SuspendLayout();
@@ -1118,8 +1133,22 @@ namespace PLARNGGui
             // nocfwpathtab
             // 
             this.nocfwpathtab.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.nocfwpathtab.Controls.Add(this.nocfwpathsearchsettings);
+            this.nocfwpathtab.Controls.Add(this.label36);
+            this.nocfwpathtab.Controls.Add(this.linkLabel2);
+            this.nocfwpathtab.Controls.Add(this.nocfwpathfind);
+            this.nocfwpathtab.Controls.Add(this.bonustableui);
+            this.nocfwpathtab.Controls.Add(this.label35);
+            this.nocfwpathtab.Controls.Add(this.bonuscountui);
+            this.nocfwpathtab.Controls.Add(this.label34);
+            this.nocfwpathtab.Controls.Add(this.basetableui);
+            this.nocfwpathtab.Controls.Add(this.label33);
+            this.nocfwpathtab.Controls.Add(this.label32);
+            this.nocfwpathtab.Controls.Add(this.basecountui);
+            this.nocfwpathtab.Controls.Add(this.label31);
+            this.nocfwpathtab.Controls.Add(this.speciespath);
             this.nocfwpathtab.Controls.Add(this.label30);
-            this.nocfwpathtab.Controls.Add(this.textBox1);
+            this.nocfwpathtab.Controls.Add(this.seedui);
             this.nocfwpathtab.Controls.Add(this.nocfwpathdisplay);
             this.nocfwpathtab.Location = new System.Drawing.Point(4, 24);
             this.nocfwpathtab.Name = "nocfwpathtab";
@@ -1127,6 +1156,141 @@ namespace PLARNGGui
             this.nocfwpathtab.Size = new System.Drawing.Size(897, 428);
             this.nocfwpathtab.TabIndex = 6;
             this.nocfwpathtab.Text = "Non-CFW Pathfinder";
+            // 
+            // nocfwpathsearchsettings
+            // 
+            this.nocfwpathsearchsettings.FormattingEnabled = true;
+            this.nocfwpathsearchsettings.Location = new System.Drawing.Point(554, 214);
+            this.nocfwpathsearchsettings.Name = "nocfwpathsearchsettings";
+            this.nocfwpathsearchsettings.Size = new System.Drawing.Size(121, 23);
+            this.nocfwpathsearchsettings.TabIndex = 16;
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(434, 217);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(114, 15);
+            this.label36.TabIndex = 15;
+            this.label36.Text = "Path Search Settings";
+            // 
+            // linkLabel2
+            // 
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.Location = new System.Drawing.Point(743, 184);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(116, 15);
+            this.linkLabel2.TabIndex = 14;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "Find Table Hash here";
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
+            // nocfwpathfind
+            // 
+            this.nocfwpathfind.Location = new System.Drawing.Point(434, 277);
+            this.nocfwpathfind.Name = "nocfwpathfind";
+            this.nocfwpathfind.Size = new System.Drawing.Size(99, 28);
+            this.nocfwpathfind.TabIndex = 13;
+            this.nocfwpathfind.Text = "Path Search";
+            this.nocfwpathfind.UseVisualStyleBackColor = true;
+            this.nocfwpathfind.Click += new System.EventHandler(this.nocfwpathfind_Click);
+            // 
+            // bonustableui
+            // 
+            this.bonustableui.Location = new System.Drawing.Point(540, 181);
+            this.bonustableui.Name = "bonustableui";
+            this.bonustableui.Size = new System.Drawing.Size(151, 23);
+            this.bonustableui.TabIndex = 12;
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(434, 184);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(100, 15);
+            this.label35.TabIndex = 11;
+            this.label35.Text = "Bonus Table Hash";
+            // 
+            // bonuscountui
+            // 
+            this.bonuscountui.Location = new System.Drawing.Point(516, 152);
+            this.bonuscountui.Name = "bonuscountui";
+            this.bonuscountui.Size = new System.Drawing.Size(45, 23);
+            this.bonuscountui.TabIndex = 10;
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(434, 155);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(76, 15);
+            this.label34.TabIndex = 9;
+            this.label34.Text = "Bonus Count";
+            // 
+            // basetableui
+            // 
+            this.basetableui.Location = new System.Drawing.Point(531, 118);
+            this.basetableui.Name = "basetableui";
+            this.basetableui.Size = new System.Drawing.Size(152, 23);
+            this.basetableui.TabIndex = 8;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(434, 121);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(91, 15);
+            this.label33.TabIndex = 7;
+            this.label33.Text = "Base Table Hash";
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(434, 90);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(67, 15);
+            this.label32.TabIndex = 6;
+            this.label32.Text = "Base Count";
+            // 
+            // basecountui
+            // 
+            this.basecountui.Location = new System.Drawing.Point(507, 87);
+            this.basecountui.Name = "basecountui";
+            this.basecountui.Size = new System.Drawing.Size(38, 23);
+            this.basecountui.TabIndex = 5;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(434, 61);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(46, 15);
+            this.label31.TabIndex = 4;
+            this.label31.Text = "Species";
+            // 
+            // speciespath
+            // 
+            this.speciespath.FormattingEnabled = true;
+            this.speciespath.Location = new System.Drawing.Point(484, 58);
+            this.speciespath.Name = "speciespath";
+            this.speciespath.Size = new System.Drawing.Size(121, 23);
+            this.speciespath.TabIndex = 3;
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(434, 18);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(32, 15);
+            this.label30.TabIndex = 2;
+            this.label30.Text = "Seed";
+            // 
+            // seedui
+            // 
+            this.seedui.Location = new System.Drawing.Point(472, 15);
+            this.seedui.Name = "seedui";
+            this.seedui.Size = new System.Drawing.Size(181, 23);
+            this.seedui.TabIndex = 1;
             // 
             // nocfwpathdisplay
             // 
@@ -1148,7 +1312,7 @@ namespace PLARNGGui
             // 
             // connect
             // 
-            this.connect.Location = new System.Drawing.Point(174, 10);
+            this.connect.Location = new System.Drawing.Point(266, 11);
             this.connect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.connect.Name = "connect";
             this.connect.Size = new System.Drawing.Size(112, 27);
@@ -1159,7 +1323,7 @@ namespace PLARNGGui
             // 
             // Disconnect
             // 
-            this.Disconnect.Location = new System.Drawing.Point(293, 10);
+            this.Disconnect.Location = new System.Drawing.Point(386, 10);
             this.Disconnect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Disconnect.Name = "Disconnect";
             this.Disconnect.Size = new System.Drawing.Size(104, 27);
@@ -1168,27 +1332,20 @@ namespace PLARNGGui
             this.Disconnect.UseVisualStyleBackColor = true;
             this.Disconnect.Click += new System.EventHandler(this.Disconnect_Click);
             // 
-            // textBox1
+            // connecttype
             // 
-            this.textBox1.Location = new System.Drawing.Point(472, 15);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(181, 23);
-            this.textBox1.TabIndex = 1;
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(434, 18);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(32, 15);
-            this.label30.TabIndex = 2;
-            this.label30.Text = "Seed";
+            this.connecttype.FormattingEnabled = true;
+            this.connecttype.Location = new System.Drawing.Point(174, 13);
+            this.connecttype.Name = "connecttype";
+            this.connecttype.Size = new System.Drawing.Size(85, 23);
+            this.connecttype.TabIndex = 6;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(933, 519);
+            this.Controls.Add(this.connecttype);
             this.Controls.Add(this.Disconnect);
             this.Controls.Add(this.connect);
             this.Controls.Add(this.IP);
@@ -1316,7 +1473,22 @@ namespace PLARNGGui
         private TabPage nocfwpathtab;
         public RichTextBox nocfwpathdisplay;
         private Label label30;
-        private TextBox textBox1;
+        private Label label31;
+        public ComboBox speciespath;
+        private Label label32;
+        public TextBox basecountui;
+        private Label label35;
+        private Label label34;
+        private Label label33;
+        public TextBox seedui;
+        public TextBox bonustableui;
+        public TextBox bonuscountui;
+        public TextBox basetableui;
+        public Button nocfwpathfind;
+        private LinkLabel linkLabel2;
+        public ComboBox nocfwpathsearchsettings;
+        private Label label36;
+        public ComboBox connecttype;
     }
 }
 
