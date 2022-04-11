@@ -85,6 +85,7 @@ namespace SysBot.Base
                         continue;
 
                     ur.DeviceProperties.TryGetValue("Address", out object addr);
+                    
                     if (Port.ToString() != addr?.ToString())
                         continue;
 

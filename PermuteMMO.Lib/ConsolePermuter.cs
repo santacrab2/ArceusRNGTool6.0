@@ -3,7 +3,6 @@ using PKHeX.Core;
 using PLARNGGui;
 using Newtonsoft.Json;
 using System.Net;
-
 namespace PermuteMMO.Lib;
 
 /// <summary>
@@ -25,7 +24,7 @@ public static class ConsolePermuter
             var areaName = AreaUtil.AreaTable[area.AreaHash];
             if (!area.IsActive)
             {
-                Console.WriteLine($"No outbreak in {areaName}.");
+                Program.main.MassiveDisplay.AppendText($"No outbreak in {areaName}.");
                 continue;
             }
             Debug.Assert(area.IsValid);
@@ -39,23 +38,6 @@ public static class ConsolePermuter
 
                 Debug.Assert(spawner.HasBase);
                 var seed = spawner.SpawnSeed;
-                if (Program.main.mmoinmap.Checked)
-                {
-                    ulong inmapseedoff;
-                    var inmapseedptr = new long[] { 0x42EEEE8, 0x78, 0xD48 + (j * 0x08), 0x58, 0x38, 0x478, 0x20 };
-                    if (!Main.USB)
-                    {
-                        inmapseedoff = Main.routes.PointerAll(inmapseedptr).Result;
-                        seed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(inmapseedoff, 8).Result);
-                    }
-                    else
-                    {
-                        inmapseedoff = Main.usbroutes.PointerAll(inmapseedptr).Result;
-                        seed = BitConverter.ToUInt64(Main.usbroutes.ReadBytesAbsoluteAsync(inmapseedoff, 8).Result);
-                    }
-                    var rnger = new Xoroshiro128Plus(seed);
-                    seed = rnger.Next();
-                }
                 var spawn = new SpawnInfo
                 {
                     BaseCount = spawner.BaseCount,
@@ -75,15 +57,15 @@ public static class ConsolePermuter
                     hasPrintedAreaMMO = true;
                 }
 
-                Program.main.MassiveDisplay.AppendText($"Spawner {j + 1} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
-                Program.main.Teleporterdisplay.AppendText($"{areaName}\nSpawner {j + 1} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n\n");
+                Program.main.MassiveDisplay.AppendText($"Spawner {j} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
+                Program.main.Teleporterdisplay.AppendText($"{areaName}\nSpawner {j} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n\n");
                 Program.main.MassiveDisplay.AppendText($"First Round Spawns: {spawn.BaseCount} Bonus Round Spawns: {spawn.BonusCount}\n");
                 bool skittishBase = SpawnGenerator.IsSkittish(spawn.BaseTable);
                 bool skittishBonus = SpawnGenerator.IsSkittish(spawn.BonusTable);
                 var lines = result.GetLines(skittishBase, skittishBonus);
                 foreach (var line in lines)
-                    Program.main.MassiveDisplay.AppendText(line+"\n");
-             
+                    Program.main.MassiveDisplay.AppendText(line + "\n");
+
             }
 
             if (!hasPrintedAreaMMO)
@@ -170,6 +152,7 @@ public static class ConsolePermuter
                 Program.main.Teleporterdisplay.AppendText($"Outbreak shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n");
                 continue;
             }
+
             Program.main.OutbreakDisplay.AppendText($"Found paths for {(Species)spawner.DisplaySpecies} Mass Outbreak in {areaName}:\n");
             Program.main.OutbreakDisplay.AppendText($"Outbreak shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
             Program.main.Teleporterdisplay.AppendText($"Outbreak shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n");
@@ -177,10 +160,10 @@ public static class ConsolePermuter
             bool skittishBase = SpawnGenerator.IsSkittish(spawner.DisplaySpecies);
             var lines = result.GetLines(skittishBase);
             foreach (var line in lines)
-                Program.main.OutbreakDisplay.AppendText(line+"\n");
-            Console.WriteLine();
+                Program.main.OutbreakDisplay.AppendText(line + "\n");
+            
         }
-        Program.main.OutbreakDisplay.AppendText("Done permuting Mass Outbreaks.\n\n");
+        Program.main.OutbreakDisplay.AppendText("Done permuting Mass Outbreaks.");
     }
 
     /// <summary>
@@ -190,8 +173,6 @@ public static class ConsolePermuter
     {
         Program.main.nocfwpathdisplay.AppendText($"Permuting all possible paths for {seed:X16}.");
         Program.main.nocfwpathdisplay.AppendText($"Base Species: {SpeciesName.GetSpeciesName(species, 2)}");
-    
-
         var result = Permuter.Permute(spawn, seed);
         if (!result.HasResults)
         {
@@ -203,7 +184,7 @@ public static class ConsolePermuter
             bool skittishBonus = SpawnGenerator.IsSkittish(spawn.BonusTable);
             var lines = result.GetLines(skittishBase, skittishBonus);
             foreach (var line in lines)
-                Program.main.nocfwpathdisplay.AppendText(line+"\n");
+                Program.main.nocfwpathdisplay.AppendText(line + "\n");
         }
 
         Program.main.nocfwpathdisplay.AppendText("\n");

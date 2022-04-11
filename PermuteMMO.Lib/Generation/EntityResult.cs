@@ -41,7 +41,7 @@ public sealed class EntityResult
         var shiny = IsShiny ? $"Shiny: {(ShinyXor == 0 ? "square" : "star")}\n" : "False\n";
         var level = Level.ToString();
         var ivs = $" {IVs[0]:00}/{IVs[1]:00}/{IVs[2]:00}/{IVs[3]:00}/{IVs[4]:00}/{IVs[5]:00}\n";
-        var nature = $"Nature: {GameInfo.GetStrings(1).Natures[Nature]}\n";
+        var nature = $"Nature: {GameInfo.GetStrings(1).Natures[Nature]}";
         var alpha = IsAlpha ? "Alpha-" : "";
         var notAlpha = !IsAlpha ? " -- NOT ALPHA" : "";
         var gender = Gender switch
@@ -51,19 +51,19 @@ public sealed class EntityResult
             _ => " (M)",
         };
         var feasibility = GetFeasibility(advances, skittishBase, skittishBonus);
-        return $"{alpha}{Name}{gender}\nPID:{pid}\nEC:{ec}\n{shiny}Level: {level}\nIVs:{ivs}{nature,-8}{feasibility}\n";
+        return $"{alpha}{Name}{gender}\nPID:{pid}\nEC:{ec}\n{shiny}Level: {level}\nIVs:{ivs}{nature,-8}{(feasibility==string.Empty?"\n":"\n"+feasibility+"\n")}";
     }
 
     private static string GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
     {
-        if (!advances.IsAnyMulti())
+        if (!advances.IsAnyMulti() && !advances.IsAnyMultiScare())
             return "-- Single advances!";
 
         if (!skittishBase && !skittishBonus)
             return string.Empty;
 
         bool skittishMulti = false;
-        int bonusIndex = GetBonusStartIndex(advances);
+        int bonusIndex = GetNextWaveStartIndex(advances);
         if (bonusIndex != -1)
         {
             skittishMulti |= skittishBase && advances[..bonusIndex].IsAnyMulti();
@@ -74,16 +74,23 @@ public sealed class EntityResult
             skittishMulti |= skittishBase && advances.IsAnyMulti();
         }
 
+        if (advances.IsAnyMultiScare())
+        {
+            if (skittishMulti)
+                return "-- Skittish: Multi scaring with aggressive!";
+            return "-- Skittish: Multi scaring!";
+        }
+
         if (skittishMulti)
             return "-- Skittish: Aggressive!";
         return     "-- Skittish: Single advances!";
     }
 
-    private static int GetBonusStartIndex(ReadOnlySpan<Advance> advances)
+    private static int GetNextWaveStartIndex(ReadOnlySpan<Advance> advances)
     {
         for (int i = 0; i < advances.Length; i++)
         {
-            if (advances[i] == Advance.SB)
+            if (advances[i] == Advance.CR)
                 return i;
         }
         return -1;

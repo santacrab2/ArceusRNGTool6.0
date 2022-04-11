@@ -25,6 +25,6 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
             return steps;
 
         var prevSeq = p.GetSteps();
-        return string.Concat(Enumerable.Repeat("prev ", (prevSeq.Length+2)/3)) + steps[(prevSeq.Length + 1)..];
+        return string.Concat(Enumerable.Repeat("-> ", (prevSeq.Length+2)/3)) + steps[(prevSeq.Length + 1)..];
     }
 }

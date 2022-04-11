@@ -79,7 +79,6 @@ namespace PLARNGGui
             this.label10 = new System.Windows.Forms.Label();
             this.OutbreakDisplay = new System.Windows.Forms.RichTextBox();
             this.MMOtab = new System.Windows.Forms.TabPage();
-            this.mmoinmap = new System.Windows.Forms.CheckBox();
             this.aggrpathbutton = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
             this.aggrpathsearchsettings = new System.Windows.Forms.ComboBox();
@@ -142,6 +141,7 @@ namespace PLARNGGui
             this.connect = new System.Windows.Forms.Button();
             this.Disconnect = new System.Windows.Forms.Button();
             this.connecttype = new System.Windows.Forms.ComboBox();
+            this.Rawtextcheckbox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.StandardSpawnstab.SuspendLayout();
             this.Outbreaktab.SuspendLayout();
@@ -682,7 +682,7 @@ namespace PLARNGGui
             // MMOtab
             // 
             this.MMOtab.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.MMOtab.Controls.Add(this.mmoinmap);
+            this.MMOtab.Controls.Add(this.Rawtextcheckbox);
             this.MMOtab.Controls.Add(this.aggrpathbutton);
             this.MMOtab.Controls.Add(this.label26);
             this.MMOtab.Controls.Add(this.aggrpathsearchsettings);
@@ -697,16 +697,6 @@ namespace PLARNGGui
             this.MMOtab.Size = new System.Drawing.Size(897, 428);
             this.MMOtab.TabIndex = 2;
             this.MMOtab.Text = "Massive Outbreaks";
-            // 
-            // mmoinmap
-            // 
-            this.mmoinmap.AutoSize = true;
-            this.mmoinmap.Location = new System.Drawing.Point(700, 306);
-            this.mmoinmap.Name = "mmoinmap";
-            this.mmoinmap.Size = new System.Drawing.Size(63, 19);
-            this.mmoinmap.TabIndex = 10;
-            this.mmoinmap.Text = "in map";
-            this.mmoinmap.UseVisualStyleBackColor = true;
             // 
             // aggrpathbutton
             // 
@@ -1340,6 +1330,17 @@ namespace PLARNGGui
             this.connecttype.Size = new System.Drawing.Size(85, 23);
             this.connecttype.TabIndex = 6;
             // 
+            // Rawtextcheckbox
+            // 
+            this.Rawtextcheckbox.AutoSize = true;
+            this.Rawtextcheckbox.Location = new System.Drawing.Point(769, 39);
+            this.Rawtextcheckbox.Name = "Rawtextcheckbox";
+            this.Rawtextcheckbox.Size = new System.Drawing.Size(118, 19);
+            this.Rawtextcheckbox.TabIndex = 10;
+            this.Rawtextcheckbox.Text = "Path Descriptions";
+            this.Rawtextcheckbox.UseVisualStyleBackColor = true;
+            this.Rawtextcheckbox.CheckedChanged += new System.EventHandler(this.Rawtextcheckbox_CheckedChanged);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1464,7 +1465,6 @@ namespace PLARNGGui
         public CheckBox inmapbox;
         private Label label29;
         public ComboBox outbreakpathsettings;
-        public CheckBox mmoinmap;
         private TabPage etumreptab;
         private LinkLabel linkLabel1;
         private RichTextBox richTextBox1;
@@ -1489,6 +1489,7 @@ namespace PLARNGGui
         public ComboBox nocfwpathsearchsettings;
         private Label label36;
         public ComboBox connecttype;
+        public CheckBox Rawtextcheckbox;
     }
 }
 

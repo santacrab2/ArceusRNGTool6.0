@@ -40,6 +40,7 @@ namespace PLARNGGui
             speciespath.DataSource = Enum.GetValues(typeof(Species));
             nocfwpathsearchsettings.DataSource = Enum.GetValues(typeof(Enums.PathSearchSettings));
             connecttype.DataSource = Enum.GetValues(typeof(Enums.ConnectionType));
+            
           
             
 
@@ -163,6 +164,7 @@ namespace PLARNGGui
             }
             else
             {
+                usbroutes.Port = int.Parse(Program.main.IP.Text);
                 usbroutes.Connect(Program.main.IP.Text);
                 var softbanptr = new long[] { 0x42BA6B0, 0x268, 0x70 };
                 var softbanoff = usbroutes.PointerAll(softbanptr).Result;
@@ -616,6 +618,14 @@ namespace PLARNGGui
             System.Diagnostics.Process.Start("explorer.exe", "https://gist.github.com/Lusamine/eaf012b35bfde9c15905c811d5d8fb5a");
 
 
+        }
+
+        private void Rawtextcheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Rawtextcheckbox.Checked)
+                AdvanceExtensions.Raw = false;
+            else
+                AdvanceExtensions.Raw = true;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace PLARNGGui
         public string Name { get; }
         public string Label { get; set; }
         public bool Connected { get; protected set; }
-        private readonly int Port;
+        public int Port;
 
       
 
@@ -41,6 +41,7 @@ namespace PLARNGGui
 
         public void Connect(string ip)
         {
+            
             SwDevice = TryFindUSB();
             if (SwDevice == null)
                 throw new Exception("USB device not found.");
@@ -69,24 +70,26 @@ namespace PLARNGGui
             }
         }
 
-        private UsbDevice? TryFindUSB()
+        public UsbDevice? TryFindUSB()
         {
-            lock (_registry)
-            {
+            
+            
                 foreach (UsbRegistry ur in UsbDevice.AllLibUsbDevices)
                 {
+                    Program.main.StandardSpawnsDisplay.AppendText("hi");
                     if (ur.Vid != 0x057E)
                         continue;
                     if (ur.Pid != 0x3000)
                         continue;
 
                     ur.DeviceProperties.TryGetValue("Address", out object addr);
+                    Program.main.StandardSpawnsDisplay.AppendText(addr.ToString());
                     if (Port.ToString() != addr?.ToString())
                         continue;
 
                     return ur.Device;
                 }
-            }
+            
             return null;
         }
 
