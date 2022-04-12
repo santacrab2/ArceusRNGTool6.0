@@ -12,19 +12,11 @@ namespace PLARNGGui
 {
     public class USBBaseRoutines
     {
-        public string Name { get; }
-        public string Label { get; set; }
-        public bool Connected { get; protected set; }
-        public int Port;
-
-      
-
-     
        
-
-        private UsbDevice? SwDevice;
-        private UsbEndpointReader? reader;
-        private UsbEndpointWriter? writer;
+        public int Port = 3;
+        public UsbDevice? SwDevice;
+        public UsbEndpointReader? reader;
+        public UsbEndpointWriter? writer;
 
         public int MaximumTransferSize { get; set; } = 0x1C0;
         public int BaseDelay { get; set; } = 1;
@@ -41,7 +33,7 @@ namespace PLARNGGui
 
         public void Connect(string ip)
         {
-            
+            Port = int.Parse(ip);
             SwDevice = TryFindUSB();
             if (SwDevice == null)
                 throw new Exception("USB device not found.");
@@ -70,28 +62,28 @@ namespace PLARNGGui
             }
         }
 
-        public UsbDevice? TryFindUSB()
+        private UsbDevice? TryFindUSB()
         {
-            
-            
+            lock (_registry)
+            {
                 foreach (UsbRegistry ur in UsbDevice.AllLibUsbDevices)
                 {
-                    Program.main.StandardSpawnsDisplay.AppendText("hi");
                     if (ur.Vid != 0x057E)
                         continue;
                     if (ur.Pid != 0x3000)
                         continue;
 
                     ur.DeviceProperties.TryGetValue("Address", out object addr);
-                    Program.main.StandardSpawnsDisplay.AppendText(addr.ToString());
+
                     if (Port.ToString() != addr?.ToString())
                         continue;
 
                     return ur.Device;
                 }
-            
+            }
             return null;
         }
+
 
         public void Disconnect()
         {

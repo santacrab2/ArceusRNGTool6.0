@@ -21,7 +21,7 @@ namespace PLARNGGui
     public partial class Main : Form
     {
         public static BotBaseRoutines routes = new BotBaseRoutines();
-        public static USBBaseRoutines usbroutes = new();
+        public static USBBaseRoutines usbroutes;
         public static RngRoutines rngroutes = new RngRoutines();
         public static OutbreakRoutines outbreakroutes = new OutbreakRoutines();
         public static MMORoutines mmoroutes = new MMORoutines();
@@ -164,7 +164,7 @@ namespace PLARNGGui
             }
             else
             {
-                usbroutes.Port = int.Parse(Program.main.IP.Text);
+                usbroutes = new();
                 usbroutes.Connect(Program.main.IP.Text);
                 var softbanptr = new long[] { 0x42BA6B0, 0x268, 0x70 };
                 var softbanoff = usbroutes.PointerAll(softbanptr).Result;
