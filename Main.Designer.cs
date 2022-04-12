@@ -55,6 +55,7 @@ namespace PLARNGGui
             this.SeedToInject = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.Outbreaktab = new System.Windows.Forms.TabPage();
+            this.shinysearch = new System.Windows.Forms.CheckBox();
             this.label29 = new System.Windows.Forms.Label();
             this.outbreakpathsettings = new System.Windows.Forms.ComboBox();
             this.inmapbox = new System.Windows.Forms.CheckBox();
@@ -142,7 +143,7 @@ namespace PLARNGGui
             this.connect = new System.Windows.Forms.Button();
             this.Disconnect = new System.Windows.Forms.Button();
             this.connecttype = new System.Windows.Forms.ComboBox();
-            this.shinysearch = new System.Windows.Forms.CheckBox();
+            this.nocfwpathdescript = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.StandardSpawnstab.SuspendLayout();
             this.Outbreaktab.SuspendLayout();
@@ -455,6 +456,16 @@ namespace PLARNGGui
             this.Outbreaktab.Size = new System.Drawing.Size(897, 428);
             this.Outbreaktab.TabIndex = 1;
             this.Outbreaktab.Text = "Outbreaks";
+            // 
+            // shinysearch
+            // 
+            this.shinysearch.AutoSize = true;
+            this.shinysearch.Location = new System.Drawing.Point(697, 267);
+            this.shinysearch.Name = "shinysearch";
+            this.shinysearch.Size = new System.Drawing.Size(93, 19);
+            this.shinysearch.TabIndex = 24;
+            this.shinysearch.Text = "Shiny Search";
+            this.shinysearch.UseVisualStyleBackColor = true;
             // 
             // label29
             // 
@@ -1136,6 +1147,7 @@ namespace PLARNGGui
             // nocfwpathtab
             // 
             this.nocfwpathtab.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.nocfwpathtab.Controls.Add(this.nocfwpathdescript);
             this.nocfwpathtab.Controls.Add(this.nocfwpathsearchsettings);
             this.nocfwpathtab.Controls.Add(this.label36);
             this.nocfwpathtab.Controls.Add(this.linkLabel2);
@@ -1343,15 +1355,16 @@ namespace PLARNGGui
             this.connecttype.Size = new System.Drawing.Size(85, 23);
             this.connecttype.TabIndex = 6;
             // 
-            // shinysearch
+            // nocfwpathdescript
             // 
-            this.shinysearch.AutoSize = true;
-            this.shinysearch.Location = new System.Drawing.Point(697, 267);
-            this.shinysearch.Name = "shinysearch";
-            this.shinysearch.Size = new System.Drawing.Size(93, 19);
-            this.shinysearch.TabIndex = 24;
-            this.shinysearch.Text = "Shiny Search";
-            this.shinysearch.UseVisualStyleBackColor = true;
+            this.nocfwpathdescript.AutoSize = true;
+            this.nocfwpathdescript.Location = new System.Drawing.Point(444, 243);
+            this.nocfwpathdescript.Name = "nocfwpathdescript";
+            this.nocfwpathdescript.Size = new System.Drawing.Size(118, 19);
+            this.nocfwpathdescript.TabIndex = 17;
+            this.nocfwpathdescript.Text = "Path Descriptions";
+            this.nocfwpathdescript.UseVisualStyleBackColor = true;
+            this.nocfwpathdescript.CheckedChanged += new System.EventHandler(this.nocfwpathdescript_CheckedChanged);
             // 
             // Main
             // 
@@ -1503,6 +1516,7 @@ namespace PLARNGGui
         public ComboBox connecttype;
         public CheckBox Rawtextcheckbox;
         public CheckBox shinysearch;
+        public CheckBox nocfwpathdescript;
     }
 }
 

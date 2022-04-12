@@ -627,5 +627,13 @@ namespace PLARNGGui
             else
                 AdvanceExtensions.Raw = true;
         }
+
+        private void nocfwpathdescript_CheckedChanged(object sender, EventArgs e)
+        {
+            if (nocfwpathdescript.Checked)
+                AdvanceExtensions.Raw = false;
+            else
+                AdvanceExtensions.Raw = true;
+        }
     }
 }
