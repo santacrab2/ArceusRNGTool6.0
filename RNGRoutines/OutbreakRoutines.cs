@@ -182,6 +182,11 @@ namespace PLARNGGui
         }
         public void GenerateNextOutbreakMatch()
         {
+            if(!Program.main.shinysearch.Checked && !Program.main.AlphaSearch.Checked)
+            {
+                Program.main.OutbreakDisplay.AppendText("Please set at least one search setting!\n");
+                return;
+            }
             byte[] startGeneratorSeed;
             var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + Convert.ToInt32(Program.main.outbreakgroupid.Text) * 0x440 + 0x20 };
             if (!Main.USB)
@@ -225,18 +230,25 @@ namespace PLARNGGui
                     fixedseed = fixedrng.Next();
                     (shiny, encryption_constant, pid, ivs, ability, gender, nature, shinyseed) = Main.rngroutes.GenerateFromSeed(fixedseed, Convert.ToInt32(Program.main.outbreakShinyrolls.Text), alpha ? 3 : 0);
 
-                    if (shiny && Program.main.AlphaSearch.Checked && alpha)
+                    if ((Program.main.shinysearch.Checked && shiny) && Program.main.AlphaSearch.Checked && alpha)
                     {
                         Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
-                    if (shiny && !Program.main.AlphaSearch.Checked)
+                    if ((Program.main.shinysearch.Checked && shiny) && (!Program.main.AlphaSearch.Checked&&!alpha))
                     {
                         Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
+                    if((!Program.main.shinysearch.Checked && !shiny) && (Program.main.AlphaSearch.Checked && alpha))
+                    {
+                        Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                        Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
+                        return;
+                    }
+                    
                     alpha = false;
                 }
                 ulong groupseed = mainrng.Next();

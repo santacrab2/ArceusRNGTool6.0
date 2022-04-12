@@ -79,6 +79,7 @@ namespace PLARNGGui
             this.label10 = new System.Windows.Forms.Label();
             this.OutbreakDisplay = new System.Windows.Forms.RichTextBox();
             this.MMOtab = new System.Windows.Forms.TabPage();
+            this.Rawtextcheckbox = new System.Windows.Forms.CheckBox();
             this.aggrpathbutton = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
             this.aggrpathsearchsettings = new System.Windows.Forms.ComboBox();
@@ -141,7 +142,7 @@ namespace PLARNGGui
             this.connect = new System.Windows.Forms.Button();
             this.Disconnect = new System.Windows.Forms.Button();
             this.connecttype = new System.Windows.Forms.ComboBox();
-            this.Rawtextcheckbox = new System.Windows.Forms.CheckBox();
+            this.shinysearch = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.StandardSpawnstab.SuspendLayout();
             this.Outbreaktab.SuspendLayout();
@@ -423,6 +424,7 @@ namespace PLARNGGui
             // Outbreaktab
             // 
             this.Outbreaktab.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Outbreaktab.Controls.Add(this.shinysearch);
             this.Outbreaktab.Controls.Add(this.label29);
             this.Outbreaktab.Controls.Add(this.outbreakpathsettings);
             this.Outbreaktab.Controls.Add(this.inmapbox);
@@ -494,7 +496,7 @@ namespace PLARNGGui
             // AlphaSearch
             // 
             this.AlphaSearch.AutoSize = true;
-            this.AlphaSearch.Location = new System.Drawing.Point(794, 322);
+            this.AlphaSearch.Location = new System.Drawing.Point(697, 292);
             this.AlphaSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.AlphaSearch.Name = "AlphaSearch";
             this.AlphaSearch.Size = new System.Drawing.Size(95, 19);
@@ -599,7 +601,7 @@ namespace PLARNGGui
             // 
             // outbreakinject
             // 
-            this.outbreakinject.Location = new System.Drawing.Point(698, 317);
+            this.outbreakinject.Location = new System.Drawing.Point(601, 317);
             this.outbreakinject.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.outbreakinject.Name = "outbreakinject";
             this.outbreakinject.Size = new System.Drawing.Size(88, 27);
@@ -640,7 +642,7 @@ namespace PLARNGGui
             // 
             // outbreakcalculate
             // 
-            this.outbreakcalculate.Location = new System.Drawing.Point(602, 317);
+            this.outbreakcalculate.Location = new System.Drawing.Point(697, 317);
             this.outbreakcalculate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.outbreakcalculate.Name = "outbreakcalculate";
             this.outbreakcalculate.Size = new System.Drawing.Size(88, 27);
@@ -697,6 +699,17 @@ namespace PLARNGGui
             this.MMOtab.Size = new System.Drawing.Size(897, 428);
             this.MMOtab.TabIndex = 2;
             this.MMOtab.Text = "Massive Outbreaks";
+            // 
+            // Rawtextcheckbox
+            // 
+            this.Rawtextcheckbox.AutoSize = true;
+            this.Rawtextcheckbox.Location = new System.Drawing.Point(769, 39);
+            this.Rawtextcheckbox.Name = "Rawtextcheckbox";
+            this.Rawtextcheckbox.Size = new System.Drawing.Size(118, 19);
+            this.Rawtextcheckbox.TabIndex = 10;
+            this.Rawtextcheckbox.Text = "Path Descriptions";
+            this.Rawtextcheckbox.UseVisualStyleBackColor = true;
+            this.Rawtextcheckbox.CheckedChanged += new System.EventHandler(this.Rawtextcheckbox_CheckedChanged);
             // 
             // aggrpathbutton
             // 
@@ -1330,16 +1343,15 @@ namespace PLARNGGui
             this.connecttype.Size = new System.Drawing.Size(85, 23);
             this.connecttype.TabIndex = 6;
             // 
-            // Rawtextcheckbox
+            // shinysearch
             // 
-            this.Rawtextcheckbox.AutoSize = true;
-            this.Rawtextcheckbox.Location = new System.Drawing.Point(769, 39);
-            this.Rawtextcheckbox.Name = "Rawtextcheckbox";
-            this.Rawtextcheckbox.Size = new System.Drawing.Size(118, 19);
-            this.Rawtextcheckbox.TabIndex = 10;
-            this.Rawtextcheckbox.Text = "Path Descriptions";
-            this.Rawtextcheckbox.UseVisualStyleBackColor = true;
-            this.Rawtextcheckbox.CheckedChanged += new System.EventHandler(this.Rawtextcheckbox_CheckedChanged);
+            this.shinysearch.AutoSize = true;
+            this.shinysearch.Location = new System.Drawing.Point(697, 267);
+            this.shinysearch.Name = "shinysearch";
+            this.shinysearch.Size = new System.Drawing.Size(93, 19);
+            this.shinysearch.TabIndex = 24;
+            this.shinysearch.Text = "Shiny Search";
+            this.shinysearch.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -1490,6 +1502,7 @@ namespace PLARNGGui
         private Label label36;
         public ComboBox connecttype;
         public CheckBox Rawtextcheckbox;
+        public CheckBox shinysearch;
     }
 }
 
