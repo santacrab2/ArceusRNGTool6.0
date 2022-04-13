@@ -11,6 +11,7 @@
   Berichan - For their work on the Teleporting mechanisms.<br>
   Olizor - For their work on Sysbot.base and all the others who have helped develop it.<br>
   Zyro - For their work on the Distortion scripts and general support through out the entire coding process<br>
+  The Villain a.k.a Kyle™ - for stress testing initial builds!<br>
   Any one else who has contributed in anyway to the RNG community.<br>
   
   # Usage:
