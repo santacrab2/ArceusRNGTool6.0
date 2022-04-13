@@ -80,6 +80,7 @@ namespace PLARNGGui
             this.label10 = new System.Windows.Forms.Label();
             this.OutbreakDisplay = new System.Windows.Forms.RichTextBox();
             this.MMOtab = new System.Windows.Forms.TabPage();
+            this.spawnerslist = new System.Windows.Forms.ComboBox();
             this.Rawtextcheckbox = new System.Windows.Forms.CheckBox();
             this.aggrpathbutton = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
@@ -122,6 +123,7 @@ namespace PLARNGGui
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.etumrepdisplay = new System.Windows.Forms.RichTextBox();
             this.nocfwpathtab = new System.Windows.Forms.TabPage();
+            this.nocfwpathdescript = new System.Windows.Forms.CheckBox();
             this.nocfwpathsearchsettings = new System.Windows.Forms.ComboBox();
             this.label36 = new System.Windows.Forms.Label();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
@@ -143,7 +145,7 @@ namespace PLARNGGui
             this.connect = new System.Windows.Forms.Button();
             this.Disconnect = new System.Windows.Forms.Button();
             this.connecttype = new System.Windows.Forms.ComboBox();
-            this.nocfwpathdescript = new System.Windows.Forms.CheckBox();
+            this.label37 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.StandardSpawnstab.SuspendLayout();
             this.Outbreaktab.SuspendLayout();
@@ -695,6 +697,8 @@ namespace PLARNGGui
             // MMOtab
             // 
             this.MMOtab.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.MMOtab.Controls.Add(this.label37);
+            this.MMOtab.Controls.Add(this.spawnerslist);
             this.MMOtab.Controls.Add(this.Rawtextcheckbox);
             this.MMOtab.Controls.Add(this.aggrpathbutton);
             this.MMOtab.Controls.Add(this.label26);
@@ -710,6 +714,15 @@ namespace PLARNGGui
             this.MMOtab.Size = new System.Drawing.Size(897, 428);
             this.MMOtab.TabIndex = 2;
             this.MMOtab.Text = "Massive Outbreaks";
+            // 
+            // spawnerslist
+            // 
+            this.spawnerslist.FormattingEnabled = true;
+            this.spawnerslist.Location = new System.Drawing.Point(769, 64);
+            this.spawnerslist.Name = "spawnerslist";
+            this.spawnerslist.Size = new System.Drawing.Size(121, 23);
+            this.spawnerslist.TabIndex = 11;
+            this.spawnerslist.SelectedIndexChanged += new System.EventHandler(this.spawnerslist_SelectedIndexChanged);
             // 
             // Rawtextcheckbox
             // 
@@ -1172,6 +1185,17 @@ namespace PLARNGGui
             this.nocfwpathtab.TabIndex = 6;
             this.nocfwpathtab.Text = "Non-CFW Pathfinder";
             // 
+            // nocfwpathdescript
+            // 
+            this.nocfwpathdescript.AutoSize = true;
+            this.nocfwpathdescript.Location = new System.Drawing.Point(444, 243);
+            this.nocfwpathdescript.Name = "nocfwpathdescript";
+            this.nocfwpathdescript.Size = new System.Drawing.Size(118, 19);
+            this.nocfwpathdescript.TabIndex = 17;
+            this.nocfwpathdescript.Text = "Path Descriptions";
+            this.nocfwpathdescript.UseVisualStyleBackColor = true;
+            this.nocfwpathdescript.CheckedChanged += new System.EventHandler(this.nocfwpathdescript_CheckedChanged);
+            // 
             // nocfwpathsearchsettings
             // 
             this.nocfwpathsearchsettings.FormattingEnabled = true;
@@ -1355,16 +1379,14 @@ namespace PLARNGGui
             this.connecttype.Size = new System.Drawing.Size(85, 23);
             this.connecttype.TabIndex = 6;
             // 
-            // nocfwpathdescript
+            // label37
             // 
-            this.nocfwpathdescript.AutoSize = true;
-            this.nocfwpathdescript.Location = new System.Drawing.Point(444, 243);
-            this.nocfwpathdescript.Name = "nocfwpathdescript";
-            this.nocfwpathdescript.Size = new System.Drawing.Size(118, 19);
-            this.nocfwpathdescript.TabIndex = 17;
-            this.nocfwpathdescript.Text = "Path Descriptions";
-            this.nocfwpathdescript.UseVisualStyleBackColor = true;
-            this.nocfwpathdescript.CheckedChanged += new System.EventHandler(this.nocfwpathdescript_CheckedChanged);
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(706, 67);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(57, 15);
+            this.label37.TabIndex = 12;
+            this.label37.Text = "Spawners";
             // 
             // Main
             // 
@@ -1517,6 +1539,8 @@ namespace PLARNGGui
         public CheckBox Rawtextcheckbox;
         public CheckBox shinysearch;
         public CheckBox nocfwpathdescript;
+        public ComboBox spawnerslist;
+        private Label label37;
     }
 }
 

@@ -635,5 +635,12 @@ namespace PLARNGGui
             else
                 AdvanceExtensions.Raw = true;
         }
+
+        private void spawnerslist_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           var index = Program.main.MassiveDisplay.Find($"shows {Program.main.spawnerslist.SelectedItem}");
+            Program.main.MassiveDisplay.SelectionStart = index;
+            Program.main.MassiveDisplay.ScrollToCaret();
+        }
     }
 }

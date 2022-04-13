@@ -56,8 +56,9 @@ public static class ConsolePermuter
                     Program.main.MassiveDisplay.AppendText($"Found paths for Massive Mass Outbreaks in {areaName}.\n");
                     hasPrintedAreaMMO = true;
                 }
-
+                
                 Program.main.MassiveDisplay.AppendText($"Spawner {j} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
+                Program.main.spawnerslist.Items.Add($"{SpeciesName.GetSpeciesName(spawner.DisplaySpecies,2)}");
                 Program.main.Teleporterdisplay.AppendText($"{areaName}\nSpawner {j} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n\n");
                 Program.main.MassiveDisplay.AppendText($"First Round Spawns: {spawn.BaseCount} Bonus Round Spawns: {spawn.BonusCount}\n");
                 bool skittishBase = SpawnGenerator.IsSkittish(spawn.BaseTable);
