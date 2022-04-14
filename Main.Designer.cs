@@ -1389,6 +1389,7 @@ namespace PLARNGGui
             this.connecttype.Name = "connecttype";
             this.connecttype.Size = new System.Drawing.Size(85, 23);
             this.connecttype.TabIndex = 6;
+            this.connecttype.SelectedIndexChanged += new System.EventHandler(this.connecttype_SelectedIndexChanged);
             // 
             // Main
             // 

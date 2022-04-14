@@ -669,5 +669,15 @@ namespace PLARNGGui
             }
           
         }
+
+        private void connecttype_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (connecttype.SelectedIndex == 1)
+            {
+                Program.main.IP.Text = "0";
+            }
+            else
+                Program.main.IP.Text = "192.168.1.0";
+        }
     }
 }
