@@ -32,7 +32,7 @@ namespace PLARNGGui
                 spawncount = spawner.BaseCount;
                 Program.main.outbreakspawncount.Text = $"{spawner.BaseCount}";
                 var mainrng = new Xoroshiro128Plus(spawner.SpawnSeed);
-                Program.main.OutbreakDisplay.AppendText($"Outbreak in {areaName} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nSpawn Count: {spawner.BaseCount}");
+                Program.main.OutbreakDisplay.AppendText($"Outbreak in {areaName} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nSpawn Count: {spawner.BaseCount}\n");
                 Program.main.Teleporterdisplay.AppendText($"Outbreak in {areaName} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n");
                 GenerateCurrentMassOutbreak(mainrng);
             }
