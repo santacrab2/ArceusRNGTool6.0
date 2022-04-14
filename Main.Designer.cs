@@ -80,6 +80,7 @@ namespace PLARNGGui
             this.label10 = new System.Windows.Forms.Label();
             this.OutbreakDisplay = new System.Windows.Forms.RichTextBox();
             this.MMOtab = new System.Windows.Forms.TabPage();
+            this.label37 = new System.Windows.Forms.Label();
             this.spawnerslist = new System.Windows.Forms.ComboBox();
             this.Rawtextcheckbox = new System.Windows.Forms.CheckBox();
             this.aggrpathbutton = new System.Windows.Forms.Button();
@@ -145,7 +146,6 @@ namespace PLARNGGui
             this.connect = new System.Windows.Forms.Button();
             this.Disconnect = new System.Windows.Forms.Button();
             this.connecttype = new System.Windows.Forms.ComboBox();
-            this.label37 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.StandardSpawnstab.SuspendLayout();
             this.Outbreaktab.SuspendLayout();
@@ -495,6 +495,7 @@ namespace PLARNGGui
             this.inmapbox.TabIndex = 21;
             this.inmapbox.Text = "in map";
             this.inmapbox.UseVisualStyleBackColor = true;
+            this.inmapbox.CheckedChanged += new System.EventHandler(this.inmapbox_CheckedChanged);
             // 
             // outbreakpaths
             // 
@@ -621,6 +622,7 @@ namespace PLARNGGui
             this.outbreakinject.TabIndex = 8;
             this.outbreakinject.Text = "Inject";
             this.outbreakinject.UseVisualStyleBackColor = true;
+            this.outbreakinject.Visible = false;
             this.outbreakinject.Click += new System.EventHandler(this.outbreakinject_Click);
             // 
             // outbreakseedtoinject
@@ -714,6 +716,15 @@ namespace PLARNGGui
             this.MMOtab.Size = new System.Drawing.Size(897, 428);
             this.MMOtab.TabIndex = 2;
             this.MMOtab.Text = "Massive Outbreaks";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(706, 67);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(57, 15);
+            this.label37.TabIndex = 12;
+            this.label37.Text = "Spawners";
             // 
             // spawnerslist
             // 
@@ -1378,15 +1389,6 @@ namespace PLARNGGui
             this.connecttype.Name = "connecttype";
             this.connecttype.Size = new System.Drawing.Size(85, 23);
             this.connecttype.TabIndex = 6;
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(706, 67);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(57, 15);
-            this.label37.TabIndex = 12;
-            this.label37.Text = "Spawners";
             // 
             // Main
             // 

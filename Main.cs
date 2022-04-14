@@ -14,6 +14,7 @@ using SysBot.Base;
 using PermuteMMO.Lib;
 using EtumrepMMO.Lib;
 using PKHeX.Core;
+using System.Buffers.Binary;
 
 
 namespace PLARNGGui
@@ -33,7 +34,7 @@ namespace PLARNGGui
             MapSelection.DataSource = Enum.GetValues(typeof(Enums.Maps));
             weatherselection.DataSource = Enum.GetValues(typeof(Enums.Weather));
             Timeofdayselection.DataSource = Enum.GetValues(typeof(Enums.Time));
-            outbreakmap.DataSource = Enum.GetValues(typeof(Enums.Maps));
+            
             aggrpathsearchsettings.DataSource = Enum.GetValues(typeof(Enums.PathSearchSettings));
             distortionmap.DataSource = Enum.GetValues(typeof(Enums.Maps));
             outbreakpathsettings.DataSource = Enum.GetValues(typeof(Enums.PathSearchSettings));
@@ -210,8 +211,10 @@ namespace PLARNGGui
             Program.main.StandardSpawnsDisplay.AppendText($"Generator Seed: {BitConverter.ToString(GeneratorSeed).Replace("-", "")}\n");
             var group_seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
             Program.main.StandardSpawnsDisplay.AppendText($"Group Seed: {string.Format("0x{0:X}", group_seed)}\n");
-            
+
             var injectionseed = rngroutes.GenerateNextStandardMatch(group_seed);
+            
+       
             
         }
 
@@ -293,23 +296,28 @@ namespace PLARNGGui
             outbreakroutes.GenerateNextOutbreakMatch();
         }
 
-        private async void outbreakinject_Click(object sender, EventArgs e)
+        private void outbreakinject_Click(object sender, EventArgs e)
         {
-            var groupid = Convert.ToUInt32(Program.main.outbreakgroupid.Text);
-            var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + groupid * 0x440 + 0x20 };
-            if (!USB)
-            {
-                var SpawnerOff = routes.PointerAll(SpawnerOffpoint).Result;
-                var seedlong = Convert.ToUInt64(Program.main.SeedToInject.Text, 16);
-                await routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(Convert.ToUInt64(Program.main.outbreakseedtoinject.Text, 16)), SpawnerOff);
-            }
-            else
-            {
-                var SpawnerOff = usbroutes.PointerAll(SpawnerOffpoint).Result;
-                var seedlong = Convert.ToUInt64(Program.main.SeedToInject.Text, 16);
-                await usbroutes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(Convert.ToUInt64(Program.main.outbreakseedtoinject.Text, 16)), SpawnerOff);
-            }
-            Program.main.OutbreakDisplay.AppendText("Injecting: " + string.Format("{0:X}", Program.main.outbreakseedtoinject.Text) + "\n");
+            
+                var groupid = Convert.ToUInt32(Program.main.outbreakgroupid.Text);
+                var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + groupid * 0x440 + 0x20 };
+                if (!USB)
+                {
+                    var SpawnerOff = routes.PointerAll(SpawnerOffpoint).Result;
+                    var seedlong = Convert.ToUInt64(Program.main.SeedToInject.Text, 16);
+                    routes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(Convert.ToUInt64(Program.main.outbreakseedtoinject.Text, 16)), SpawnerOff);
+                   
+                }
+                else
+                {
+                    var SpawnerOff = usbroutes.PointerAll(SpawnerOffpoint).Result;
+                    var seedlong = Convert.ToUInt64(Program.main.SeedToInject.Text, 16);
+                    usbroutes.WriteBytesAbsoluteAsync(BitConverter.GetBytes(Convert.ToUInt64(Program.main.outbreakseedtoinject.Text, 16)), SpawnerOff);
+                }
+                Program.main.OutbreakDisplay.AppendText("Injecting: " + string.Format("{0:X}", Program.main.outbreakseedtoinject.Text) + "\n");
+                return;
+            
+           
         }
 
         private void MassiveRead_Click(object sender, EventArgs e)
@@ -638,9 +646,28 @@ namespace PLARNGGui
 
         private void spawnerslist_SelectedIndexChanged(object sender, EventArgs e)
         {
-           var index = Program.main.MassiveDisplay.Find($"shows {Program.main.spawnerslist.SelectedItem}");
+            var newstring = Program.main.spawnerslist.SelectedItem.ToString().Replace(":", " shows");
+            
+            
+            var index = Program.main.MassiveDisplay.Find(newstring);
             Program.main.MassiveDisplay.SelectionStart = index;
             Program.main.MassiveDisplay.ScrollToCaret();
+        }
+
+        private void inmapbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (Program.main.inmapbox.Checked) 
+            {
+                Program.main.outbreakmap.DataSource = null;
+                Program.main.outbreakmap.Items.Clear();
+                Program.main.outbreakmap.DataSource = Enum.GetValues(typeof(Enums.Maps));
+                Program.main.outbreakinject.Visible = true;
+            }
+            else
+            {
+                Program.main.outbreakinject.Visible = false;
+            }
+          
         }
     }
 }

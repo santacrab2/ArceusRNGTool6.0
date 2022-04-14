@@ -17,6 +17,7 @@ public static class ConsolePermuter
     /// </summary>
     public static void PermuteMassiveMassOutbreak(Span<byte> data)
     {
+        Program.main.spawnerslist.Items.Clear();
         var block = new MassiveOutbreakSet8a(data);
         for (int i = 0; i < MassiveOutbreakSet8a.AreaCount; i++)
         {
@@ -54,11 +55,12 @@ public static class ConsolePermuter
                 if (!hasPrintedAreaMMO)
                 {
                     Program.main.MassiveDisplay.AppendText($"Found paths for Massive Mass Outbreaks in {areaName}.\n");
+                    Program.main.spawnerslist.Items.Add($"{areaName}");
                     hasPrintedAreaMMO = true;
                 }
                 
                 Program.main.MassiveDisplay.AppendText($"Spawner {j} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
-                Program.main.spawnerslist.Items.Add($"{SpeciesName.GetSpeciesName(spawner.DisplaySpecies,2)}");
+                Program.main.spawnerslist.Items.Add($"Spawner {j}: {SpeciesName.GetSpeciesName(spawner.DisplaySpecies,2)}");
                 Program.main.Teleporterdisplay.AppendText($"{areaName}\nSpawner {j} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n\n");
                 Program.main.MassiveDisplay.AppendText($"First Round Spawns: {spawn.BaseCount} Bonus Round Spawns: {spawn.BonusCount}\n");
                 bool skittishBase = SpawnGenerator.IsSkittish(spawn.BaseTable);

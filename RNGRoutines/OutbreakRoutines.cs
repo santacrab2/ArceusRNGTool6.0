@@ -16,19 +16,23 @@ namespace PLARNGGui
         public static int spawncount;
         public void ReadOutbreakJubilife(Span<byte> data)
         {
+            Program.main.outbreakmap.DataSource = null;
+            Program.main.outbreakmap.Items.Clear();
             var block = new MassOutbreakSet8a(data);
             for(int i = 0; i < 5; i++)
             {
                 var spawner = block[i];
                 var areaName = AreaUtil.AreaTable[spawner.AreaHash];
+                Program.main.outbreakmap.Items.Add($"{areaName}");
                 if (!spawner.HasOutbreak)
                 {
                     Program.main.OutbreakDisplay.AppendText($"No outbreak in {areaName}.\n");
                     continue;
                 }
                 spawncount = spawner.BaseCount;
+                Program.main.outbreakspawncount.Text = $"{spawner.BaseCount}";
                 var mainrng = new Xoroshiro128Plus(spawner.SpawnSeed);
-                Program.main.OutbreakDisplay.AppendText($"Outbreak in {areaName} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\n");
+                Program.main.OutbreakDisplay.AppendText($"Outbreak in {areaName} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nSpawn Count: {spawner.BaseCount}");
                 Program.main.Teleporterdisplay.AppendText($"Outbreak in {areaName} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}\n");
                 GenerateCurrentMassOutbreak(mainrng);
             }
@@ -45,10 +49,21 @@ namespace PLARNGGui
             var minimum = spawnmap.Count() - 16;
             var group_id = minimum + 30;
             ulong groupseed = 0;
+            var coordsptr = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x20 };
             var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
             ulong SpawnerOff;
+            MassOutbreakSpawner8a spawner = new();
             if (!Main.USB)
             {
+                var coordsoff = Main.routes.PointerAll(coordsptr).Result;
+                var theblock = new MassOutbreakSet8a(Main.routes.ReadBytesAbsoluteAsync(coordsoff, 0x190).Result);
+                
+                for(int i = 0; i < 5; i++)
+                {
+                    spawner = theblock[i];
+                    if (spawner.HasOutbreak)
+                        break;
+                }
                 SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
                 while (groupseed == 0 && group_id != minimum)
                 {
@@ -65,6 +80,15 @@ namespace PLARNGGui
             }
             else
             {
+                var coordsoff = Main.usbroutes.PointerAll(coordsptr).Result;
+                var theblock = new MassOutbreakSet8a(Main.usbroutes.ReadBytesAbsoluteAsync(coordsoff, 0x190).Result);
+
+                for (int i = 0; i < 5; i++)
+                {
+                    spawner = theblock[i];
+                    if (spawner.HasOutbreak)
+                        break;
+                }
                 SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
                 while (groupseed == 0 && group_id != minimum)
                 {
@@ -87,9 +111,10 @@ namespace PLARNGGui
             {
                 SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
                 GeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
-                Program.main.OutbreakDisplay.AppendText($"Generator Seed: {BitConverter.ToString(GeneratorSeed).Replace("-", "")}\n");
+                Program.main.OutbreakDisplay.AppendText($"Species: {SpeciesName.GetSpeciesName(spawner.DisplaySpecies,2)}\nGenerator Seed: {BitConverter.ToString(GeneratorSeed).Replace("-", "")}\n");
                 var group_seed = (BitConverter.ToUInt64(GeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
                 Program.main.OutbreakDisplay.AppendText($"Group Seed: {string.Format("0x{0:X}", group_seed)}\n");
+                Program.main.Teleporterdisplay.AppendText($"Outbreak in {AreaUtil.AreaTable[spawner.AreaHash]} shows {SpeciesName.GetSpeciesName(spawner.DisplaySpecies, 2)}\nCoords:\nX: {spawner.X}\nY: {spawner.Y}\nZ: {spawner.Z}");
                 var spawns = 0;
                 for (int i = 0; i < 4; i++)
                 {
@@ -187,22 +212,43 @@ namespace PLARNGGui
                 Program.main.OutbreakDisplay.AppendText("Please set at least one search setting!\n");
                 return;
             }
-            byte[] startGeneratorSeed;
-            var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + Convert.ToInt32(Program.main.outbreakgroupid.Text) * 0x440 + 0x20 };
-            if (!Main.USB)
+            Xoroshiro128Plus mainrng = new();
+            if (Program.main.inmapbox.Checked)
             {
-                var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
-                startGeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                byte[] startGeneratorSeed;
+                var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + Convert.ToInt32(Program.main.outbreakgroupid.Text) * 0x440 + 0x20 };
+                if (!Main.USB)
+                {
+                    var SpawnerOff = Main.routes.PointerAll(SpawnerOffpoint).Result;
+                    startGeneratorSeed = Main.routes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                }
+                else
+                {
+                    var SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
+                    startGeneratorSeed = Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                }
+                Program.main.OutbreakDisplay.AppendText($"Generator Seed: {BitConverter.ToString(startGeneratorSeed).Replace("-", "")}\n");
+                var group_seed = (BitConverter.ToUInt64(startGeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
+                Program.main.OutbreakDisplay.AppendText($"Group Seed: {string.Format("0x{0:X}", group_seed)}\n");
+                mainrng = new Xoroshiro128Plus(group_seed);
             }
             else
             {
-                var SpawnerOff = Main.usbroutes.PointerAll(SpawnerOffpoint).Result;
-                startGeneratorSeed = Main.usbroutes.ReadBytesAbsoluteAsync(SpawnerOff, 8).Result;
+                var outbreakptr = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x20 + (0x50 * Program.main.outbreakmap.SelectedIndex) + 0x38 };
+                if (!Main.USB)
+                {
+                    var outbreakoff = Main.routes.PointerAll(outbreakptr).Result;
+                    var seed = BitConverter.ToUInt64(Main.routes.ReadBytesAbsoluteAsync(outbreakoff, 8).Result);
+                    var groupseed = (seed - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
+                    mainrng = new Xoroshiro128Plus(groupseed);
+                }
+                else
+                {
+                    var outbreakoff = Main.usbroutes.PointerAll(outbreakptr).Result;
+                    var seed = BitConverter.ToUInt64(Main.usbroutes.ReadBytesAbsoluteAsync(outbreakoff, 8).Result);
+                    mainrng = new Xoroshiro128Plus(seed);
+                }
             }
-            Program.main.OutbreakDisplay.AppendText($"Generator Seed: {BitConverter.ToString(startGeneratorSeed).Replace("-", "")}\n");
-            var group_seed = (BitConverter.ToUInt64(startGeneratorSeed, 0) - 0x82A2B175229D6A5B) & 0xFFFFFFFFFFFFFFFF;
-            Program.main.OutbreakDisplay.AppendText($"Group Seed: {string.Format("0x{0:X}", group_seed)}\n");
-            var mainrng = new Xoroshiro128Plus(group_seed);
             bool shiny = false;
             ulong encryption_constant = new ulong();
             ulong pid = new ulong();
@@ -233,18 +279,21 @@ namespace PLARNGGui
                     if ((Program.main.shinysearch.Checked && shiny) && Program.main.AlphaSearch.Checked && alpha)
                     {
                         Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                       
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
                     if ((Program.main.shinysearch.Checked && shiny) && (!Program.main.AlphaSearch.Checked&&!alpha))
                     {
                         Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                 
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
                     if((!Program.main.shinysearch.Checked && !shiny) && (Program.main.AlphaSearch.Checked && alpha))
                     {
                         Program.main.OutbreakDisplay.AppendText($"Initial Spawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                 
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
@@ -267,15 +316,24 @@ namespace PLARNGGui
                     fixedseed = fixedrng.Next();
                     (shiny, encryption_constant, pid, ivs, ability, gender, nature, shinyseed) = Main.rngroutes.GenerateFromSeed(fixedseed, Convert.ToInt32(Program.main.outbreakShinyrolls.Text), alpha ? 3 : 0);
 
-                    if (shiny && Program.main.AlphaSearch.Checked && alpha)
+                    if ((Program.main.shinysearch.Checked && shiny) && Program.main.AlphaSearch.Checked && alpha)
                     {
-                        Program.main.OutbreakDisplay.AppendText($"Respawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                        Program.main.OutbreakDisplay.AppendText($"ReSpawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                     
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
-                    if (shiny && !Program.main.AlphaSearch.Checked)
+                    if ((Program.main.shinysearch.Checked && shiny) && (!Program.main.AlphaSearch.Checked && !alpha))
                     {
-                        Program.main.OutbreakDisplay.AppendText($"Respawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                        Program.main.OutbreakDisplay.AppendText($"ReSpawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                      
+                        Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
+                        return;
+                    }
+                    if ((!Program.main.shinysearch.Checked && !shiny) && (Program.main.AlphaSearch.Checked && alpha))
+                    {
+                        Program.main.OutbreakDisplay.AppendText($"ReSpawn: {i}\nAdvances: {advances}\nAlpha: {alpha}\nShiny:{shiny}\nEC:{string.Format("{0:X}", encryption_constant)}\nPID:{string.Format("{0:X}", pid)}\nIVs:{ivs[0]}/{ivs[1]}/{ivs[2]}/{ivs[3]}/{ivs[4]}/{ivs[5]}\nAbility:{ability}\nGender:{gender}\nNature{((Nature)nature)}\nShinySeed{string.Format("0x{0:X}", GeneratorSeed)}\n\n");
+                      
                         Program.main.outbreakseedtoinject.Text = string.Format("0x{0:X}", GeneratorSeed);
                         return;
                     }
