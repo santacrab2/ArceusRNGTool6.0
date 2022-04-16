@@ -591,7 +591,7 @@ namespace PLARNGGui
             else
             {
                 var result = GroupSeedFinder.FindSeed(inputs);
-                if (result is default(ulong))
+                if (result.Seed is default(ulong))
                 {
                     Program.main.etumrepdisplay.AppendText($"No group seeds found with the input data. Double check your inputs (valid inputs: {inputs.Count}).");
                 }
@@ -609,7 +609,7 @@ namespace PLARNGGui
 
             var userinfo = new UserEnteredSpawnInfo() { Seed = Program.main.seedui.Text,Species = (ushort)(Species)Program.main.speciespath.SelectedItem,BaseCount = int.Parse(Program.main.basecountui.Text),BaseTable = Program.main.basetableui.Text,BonusCount = int.Parse(Program.main.bonuscountui.Text),BonusTable = Program.main.bonustableui.Text};
             var spawner = userinfo.GetSpawn();
-            SpawnGenerator.MaxShinyRolls = spawner.Type is SpawnType.MMO ? 19 : 32;
+            SaveFileParameter.UseSaveFileShinyRolls = false;
             PermuteMeta.SatisfyCriteria = (results, advances) => (results.IsAlpha || results.IsShiny);
             if ((Enums.PathSearchSettings)Program.main.nocfwpathsearchsettings.SelectedItem == Enums.PathSearchSettings.ShinyandAlpha)
                 PermuteMeta.SatisfyCriteria = (results, advances) => results.IsAlpha && results.IsShiny;

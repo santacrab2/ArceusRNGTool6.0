@@ -3,19 +3,33 @@
 /// <summary>
 /// <see cref="EntityResult"/> wrapper with some utility logic to print to console.
 /// </summary>
-public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in int SpawnIndex, in bool IsBonus)
+public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in int SpawnIndex)
 {
-    public string GetLine(PermuteResult? prev, bool isActionMultiResult, bool skittishBase, bool skittishBonus)
+    private bool IsBonus => Array.IndexOf(Advances, Advance.CR) != -1;
+    private int WaveIndex => Advances.Count(adv => adv == Advance.CR);
+
+    public string GetLine(PermuteResult? prev, bool isActionMultiResult, bool hasChildChain)
     {
         var steps = GetSteps(prev);
+        var feasibility = GetFeasibility(Advances);
         // 37 total characters for the steps:
-        // 10+7 spawner has 6+(3)+3=12 max permutations, +"SB|", remove last |; (3*12+2)=37.
-        var line = $"Path: {steps}\n{(IsBonus ? "Bonus " : "")}Spawn:{SpawnIndex}\n{Entity.GetSummary(Advances, skittishBase, skittishBonus)}";
-        if (prev != null)
+        // 10+7 spawner has 6+(3)+3=12 max permutations, +"CR|", remove last |; (3*12+2)=37.
+        var line = $"Path: {steps}\n{GetWaveIndicator}Spawn: {SpawnIndex}\n{Entity.GetSummary()}{feasibility}";
+        if (prev != null || hasChildChain)
             line += "Chain result!\n";
         if (isActionMultiResult)
             line += "Spawns multiple results!\n";
         return line;
+    }
+
+    private string GetWaveIndicator()
+    {
+        if (!IsBonus)
+            return "";
+        var waveIndex = WaveIndex;
+        if (waveIndex == 1)
+            return "Bonus ";
+        return    $"Wave {waveIndex}";
     }
 
     public string GetSteps(PermuteResult? prev = null)
@@ -26,5 +40,32 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
 
         var prevSeq = p.GetSteps();
         return string.Concat(Enumerable.Repeat("-> ", (prevSeq.Length+2)/3)) + steps[(prevSeq.Length + 1)..];
+    }
+
+    private static string GetFeasibility(ReadOnlySpan<Advance> advances)
+    {
+        if (advances.IsAny(AdvanceExtensions.IsMultiScare))
+        {
+            if (advances.IsAny(AdvanceExtensions.IsMultiBeta))
+                return "-- Skittish: Multi scaring with aggressive!\n";
+            return "-- Skittish: Multi scaring!\n";
+        }
+        if (advances.IsAny(AdvanceExtensions.IsMultiBeta))
+            return "-- Skittish: Aggressive!\n";
+
+        if (advances.IsAny(z => z == Advance.B1))
+        {
+            if (!advances.IsAny(AdvanceExtensions.IsMultiAggressive))
+                return "-- Skittish: Single advances!\n";
+            return "-- Skittish: Mostly aggressive!\n";
+        }
+
+        if (advances.IsAny(AdvanceExtensions.IsMultiOblivious))
+            return "-- Oblivious: Aggressive!\n";
+
+        if (advances.IsAny(AdvanceExtensions.IsMultiAggressive))
+            return string.Empty;
+
+        return "-- Single advances!\n";
     }
 }

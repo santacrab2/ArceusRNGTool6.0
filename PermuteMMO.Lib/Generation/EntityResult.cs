@@ -31,10 +31,11 @@ public sealed class EntityResult
     public byte Height { get; set; }
     public byte Weight { get; set; }
 
+    public bool IsOblivious => BehaviorUtil.Oblivious.Contains(Species);
     public bool IsSkittish => BehaviorUtil.Skittish.Contains(Species);
-    public bool IsAggressive => IsAlpha || !IsSkittish;
+    public bool IsAggressive => IsAlpha || !(IsSkittish || IsOblivious);
 
-    public string GetSummary(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
+    public string GetSummary()
     {
         var pid = string.Format("{0:X}", PID);
         var ec = string.Format("{0:X}", EC);
@@ -50,49 +51,7 @@ public sealed class EntityResult
             1 => " (F)",
             _ => " (M)",
         };
-        var feasibility = GetFeasibility(advances, skittishBase, skittishBonus);
-        return $"{alpha}{Name}{gender}\nPID:{pid}\nEC:{ec}\n{shiny}Level: {level}\nIVs:{ivs}{nature,-8}{(feasibility==string.Empty?"\n":"\n"+feasibility+"\n")}";
-    }
-
-    private static string GetFeasibility(ReadOnlySpan<Advance> advances, bool skittishBase, bool skittishBonus)
-    {
-        if (!advances.IsAnyMulti() && !advances.IsAnyMultiScare())
-            return "-- Single advances!";
-
-        if (!skittishBase && !skittishBonus)
-            return string.Empty;
-
-        bool skittishMulti = false;
-        int bonusIndex = GetNextWaveStartIndex(advances);
-        if (bonusIndex != -1)
-        {
-            skittishMulti |= skittishBase && advances[..bonusIndex].IsAnyMulti();
-            skittishMulti |= skittishBonus && advances[bonusIndex..].IsAnyMulti();
-        }
-        else
-        {
-            skittishMulti |= skittishBase && advances.IsAnyMulti();
-        }
-
-        if (advances.IsAnyMultiScare())
-        {
-            if (skittishMulti)
-                return "-- Skittish: Multi scaring with aggressive!";
-            return "-- Skittish: Multi scaring!";
-        }
-
-        if (skittishMulti)
-            return "-- Skittish: Aggressive!";
-        return     "-- Skittish: Single advances!";
-    }
-
-    private static int GetNextWaveStartIndex(ReadOnlySpan<Advance> advances)
-    {
-        for (int i = 0; i < advances.Length; i++)
-        {
-            if (advances[i] == Advance.CR)
-                return i;
-        }
-        return -1;
+        return $"{alpha}{Name}{gender}\nPID:{pid}\nEC:{ec}\n{shiny}Level: {level}\nIVs:{ivs}{nature,-8}\n";
     }
 }
+
