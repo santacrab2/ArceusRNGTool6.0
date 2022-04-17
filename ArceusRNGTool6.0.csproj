@@ -11,8 +11,11 @@
 
   <ItemGroup>
     <None Remove="arceus_ice_TtM_icon.ico" />
+    <None Remove="EtumrepMMO.Lib.dll" />
     <None Remove="libz3.dll" />
     <None Remove="mmo_es.txt" />
+    <None Remove="PLA-SeedFinder_32.dll" />
+    <None Remove="PLA-SeedFinder_64.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,16 +30,25 @@
 
   <ItemGroup>
     <PackageReference Include="LibUsbDotNet" Version="2.2.29" />
+    <PackageReference Include="Microsoft.Z3" Version="4.8.14" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.14" />
     <PackageReference Include="PKHeX.Core" Version="22.3.18" />
-    <PackageReference Include="z3win_AnyCPU" Version="4.5.0.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="EtumrepMMO.Lib">
-      <HintPath>..\EtumrepMMO\EtumrepMMO.Lib\bin\x64\Release\net6.0\EtumrepMMO.Lib.dll</HintPath>
-    </Reference>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
