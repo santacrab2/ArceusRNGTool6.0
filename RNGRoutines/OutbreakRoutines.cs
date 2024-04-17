@@ -18,7 +18,7 @@ namespace PLARNGGui
         {
             Program.main.outbreakmap.DataSource = null;
             Program.main.outbreakmap.Items.Clear();
-            var block = new MassOutbreakSet8a(data);
+            var block = new PermuteMMO.Lib.MassOutbreakSet8a(data);
             for(int i = 0; i < 5; i++)
             {
                 var spawner = block[i];
@@ -42,8 +42,8 @@ namespace PLARNGGui
             ulong seed1 = 0x82A2B175229D6A5B;
             bool alphamatch = false;
             ulong sseed = 0;
-            var Spawnersjson = new WebClient().DownloadString($"https://raw.githubusercontent.com/santacrab2/SysBot.NET/RNGstuff/Spawners/{Program.main.outbreakmap.SelectedItem}.json");
-            var Encountersjson = new WebClient().DownloadString($"https://raw.githubusercontent.com/santacrab2/SysBot.NET/RNGstuff/encounters/{Program.main.outbreakmap.SelectedItem}.json");
+            var Spawnersjson = new WebClient().DownloadString($"https://raw.githubusercontent.com/santacrab2/SysBot.NET/SantasMainBranch/RNGstuff/Spawners/{Program.main.outbreakmap.SelectedItem}.json");
+            var Encountersjson = new WebClient().DownloadString($"https://raw.githubusercontent.com/santacrab2/SysBot.NET/SantasMainBranch/RNGstuff/Spawners/{Program.main.outbreakmap.SelectedItem}.json");
             var encmap = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(Encountersjson);
             var spawnmap = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(Spawnersjson);
             var minimum = spawnmap.Count() - 16;
@@ -52,11 +52,11 @@ namespace PLARNGGui
             var coordsptr = new long[] { 0x42BA6B0, 0x2B0, 0x58, 0x18, 0x20 };
             var SpawnerOffpoint = new long[] { 0x42a6ee0, 0x330, 0x70 + group_id * 0x440 + 0x408 };
             ulong SpawnerOff;
-            MassOutbreakSpawner8a spawner = new();
+            PermuteMMO.Lib.MassOutbreakSpawner8a spawner = new();
             if (!Main.USB)
             {
                 var coordsoff = Main.routes.PointerAll(coordsptr).Result;
-                var theblock = new MassOutbreakSet8a(Main.routes.ReadBytesAbsoluteAsync(coordsoff, 0x190).Result);
+                var theblock = new PermuteMMO.Lib.MassOutbreakSet8a(Main.routes.ReadBytesAbsoluteAsync(coordsoff, 0x190).Result);
                 
                 for(int i = 0; i < 5; i++)
                 {
@@ -81,7 +81,7 @@ namespace PLARNGGui
             else
             {
                 var coordsoff = Main.usbroutes.PointerAll(coordsptr).Result;
-                var theblock = new MassOutbreakSet8a(Main.usbroutes.ReadBytesAbsoluteAsync(coordsoff, 0x190).Result);
+                var theblock = new PermuteMMO.Lib.MassOutbreakSet8a(Main.usbroutes.ReadBytesAbsoluteAsync(coordsoff, 0x190).Result);
 
                 for (int i = 0; i < 5; i++)
                 {

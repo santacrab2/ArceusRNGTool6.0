@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>arceus_ice_TtM_icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,10 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="arceus_ice_TtM_icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="arceus_ice_TtM_icon.ico" />
-    <EmbeddedResource Include="libz3.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+   
     <EmbeddedResource Include="mmo_es.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -30,7 +33,7 @@
 
   <ItemGroup>
     <PackageReference Include="LibUsbDotNet" Version="2.2.29" />
-    <PackageReference Include="Microsoft.Z3" Version="4.8.14" />
+    <PackageReference Include="Microsoft.Z3" Version="4.8.17" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.14" />
     <PackageReference Include="PKHeX.Core" Version="22.3.18" />

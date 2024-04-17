@@ -14,7 +14,7 @@ public sealed record PermuteResult(Advance[] Advances, EntityResult Entity, in i
         var feasibility = GetFeasibility(Advances);
         // 37 total characters for the steps:
         // 10+7 spawner has 6+(3)+3=12 max permutations, +"CR|", remove last |; (3*12+2)=37.
-        var line = $"Path: {steps}\n{GetWaveIndicator}Spawn: {SpawnIndex}\n{Entity.GetSummary()}{feasibility}";
+        var line = $"Path: {steps}\n{GetWaveIndicator()}Spawn: {SpawnIndex}\n{Entity.GetSummary()}{feasibility}";
         if (prev != null || hasChildChain)
             line += "Chain result!\n";
         if (isActionMultiResult)
